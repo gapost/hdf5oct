@@ -5,9 +5,12 @@ octs=$(src:.cc=.oct)
 objs=$(src:.cc=.o)
 
 H5FLAGS=$(shell octave --eval 'exit(__octave_config_info__ ("build_features").HDF5 != 1)' &> /dev/null && echo "-DHAVE_HDF5") \
-$(shell octave --eval 'exit(__octave_config_info__ ("build_features").HDF5_18 != 1)' &> /dev/null && echo "-DHAVE_HDF5_18")
+        $(shell octave --eval 'exit(__octave_config_info__ ("build_features").HDF5_18 != 1)' &> /dev/null && echo "-DHAVE_HDF5_18") \
+		$(shell octave --eval 'exit(__octave_config_info__ ("build_features").HDF5_H != 1)' &> /dev/null && echo "-DHAVE_HDF5_H") \
+		$(shell octave --eval 'exit(__octave_config_info__ ("build_features").HDF5_INT2FLOAT_CONVERSIONS != 1)' &> /dev/null && echo "-DHAVE_HDF5_INT2FLOAT_CONVERSIONS") \
+		$(shell octave --eval 'exit(__octave_config_info__ ("build_features").HDF5_UTF8 != 1)' &> /dev/null && echo "-DHAVE_HDF5_UTF8")
 
-MKOCTFILE=CXX="$(CXX)" CXXFLAGS="-ansi -std=c++11" mkoctfile -v $(H5FLAGS)
+MKOCTFILE=CXX="$(CXX)" CXXFLAGS="-ansi -std=c++11 -shlib" mkoctfile -v $(H5FLAGS)
 
 VERSION=0.5.0
 PACKAGEFILE=hdf5oct-$(VERSION).tar.gz
