@@ -1,8 +1,7 @@
 CXX=h5c++
-src= h5read.cc
-headers=h5read.h
-octs=$(src:.cc=.oct)
-objs=$(src:.cc=.o)
+
+octs=__h5create__.oct __h5write__.oct __h5read__.oct h5info.oct
+octsources := $(addsuffix .cc,$(basename $(OCTFILES)))
 
 H5FLAGS=$(shell octave --eval 'exit(__octave_config_info__ ("build_features").HDF5 != 1)' &> /dev/null && echo "-DHAVE_HDF5") \
         $(shell octave --eval 'exit(__octave_config_info__ ("build_features").HDF5_18 != 1)' &> /dev/null && echo "-DHAVE_HDF5_18") \
@@ -19,12 +18,11 @@ PACKAGEFILE=hdf5oct-$(VERSION).tar.gz
 
 all: $(octs) package
 
-%.oct: $(objs)
-	echo $(MKOCTFILE) -o $@ $(objs)
-	$(MKOCTFILE) -o $@ $(objs)
+hdf5oct.o : hdf5oct.cc hdf5oct.h
+	$(MKOCTFILE) -c hdf5oct.cc
 
-%.o: %.cc $(headers)
-	$(MKOCTFILE) -c $<
+%.oct: %.cc hdf5oct.h hdf5oct.o
+	$(MKOCTFILE) $< hdf5oct.o
 
 clean:
 	rm -f *.o *.oct package/inst/* test/test*.h5 $(PACKAGEFILE)
