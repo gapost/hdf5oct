@@ -237,7 +237,8 @@ void hdf5oct::dset_info_t::set(const DataSet& ds, const string& path) {
         vector<hsize_t> hdims(ndim);
         dscpl.getChunk(ndim, hdims.data());
         for(octave_idx_type i=0; i<ndim; i++) chunksize(i) = hdims[ndim-1-i];
-    }   
+    } 
+    attributes = readAttributes(ds);  
 }
 octave_scalar_map hdf5oct::dset_info_t::oct_map() const {
     // all map fields mandatory !!
@@ -246,6 +247,7 @@ octave_scalar_map hdf5oct::dset_info_t::oct_map() const {
     M["Datatype"] = dtype_info.oct_map();
     M["Dataspace"] = dspace_info.oct_map();
     M["ChunkSize"] = chunksize; 
+    M["Attributes"] = attributes;
     return octave_scalar_map(M);
 }
 void hdf5oct::group_info_t::set(const Group& g, const string& path) {
@@ -292,7 +294,8 @@ void hdf5oct::group_info_t::set(const Group& g, const string& path) {
             default:
             break;
         }
-    }  
+    } 
+    attributes = readAttributes(g); 
 }
 octave_scalar_map hdf5oct::group_info_t::oct_map() const {
     // all map fields mandatory !!
@@ -302,13 +305,13 @@ octave_scalar_map hdf5oct::group_info_t::oct_map() const {
     octave_map omap;
 
     vector<string> keys{"Name","Groups","Datasets",
-                        "Datatypes","Links"};
+                        "Datatypes","Links","Attributes"};
     omap = octave_map(dim_vector(groups.size(),1),keys);
     for(int i=0; i<groups.size(); i++) 
         omap.fast_elem_insert(i, groups[i].oct_map());
     M["Groups"] = omap;
 
-    keys = {"Name","Datatype","Dataspace","ChunkSize"};
+    keys = {"Name","Datatype","Dataspace","ChunkSize","Attributes"};
     omap = octave_map(dim_vector(datasets.size(),1),keys);
     for(int i=0; i<datasets.size(); i++) 
         omap.fast_elem_insert(i, datasets[i].oct_map());
@@ -325,6 +328,8 @@ octave_scalar_map hdf5oct::group_info_t::oct_map() const {
     for(int i=0; i<links.size(); i++) 
         omap.fast_elem_insert(i, links[i].oct_map());
     M["Links"] = omap;
+
+    M["Attributes"] = attributes;
 
     return octave_scalar_map(M);
 }
@@ -564,7 +569,7 @@ void hdf5oct::data_exchange::write_string(const data_exchange& dxfile)
 octave_value hdf5oct::data_exchange::read_string() 
 {
     octave_idx_type n = 1;
-    for(octave_idx_type i=0; i<dv.ndims(); i++) n *= dv.xelem(i);
+    for(octave_idx_type i=0; i<dv.ndims(); i++) n *= dv(i);
 
     if (dtype_info.size == H5T_VARIABLE) {        
         vector<char*> p(n);
@@ -577,17 +582,19 @@ octave_value hdf5oct::data_exchange::read_string()
             lastError = "Error in call to H5Dvlen_reclaim";
             return octave_value();
         }
-        return octave_value(A);
+        return (n > 1) ? octave_value(A) : octave_value(A(0));
     } else {
-        if (!(dv.ndims()==2 && dv.xelem(1)!=1)) {
-            lastError = "loading of multidimensional char arrays is not suppoted";
-            return octave_value();
-        }
         octave_idx_type sz = dtype_info.size;
-        dim_vector dv1(1,sz);
-        charNDArray A(dv1);
-        dset.read(A.fortran_vec(),dtype,from_dim_vector(dv1),dspace);
-        return octave_value(A);
+        vector<char> buff(n*sz,'\0'); 
+        DataSpace memspace =  from_dim_vector(dv);               
+        dset.read(buff.data(),dtype,memspace,dspace);
+        Array<string> A(dv);
+        const char* p = buff.data();
+        for(octave_idx_type i = 0; i<n; i++) {
+            A(i) = string(p,sz);
+            p += sz;
+        }
+        return n > 1 ? octave_value(A) : octave_value(A(0));
     }
 }
 
@@ -610,7 +617,7 @@ octave_value hdf5oct::data_exchange::read_attribute() {
 octave_value hdf5oct::data_exchange::read_string_attr() 
 {
     octave_idx_type n = 1;
-    for(octave_idx_type i=0; i<dv.ndims(); i++) n *= dv.xelem(i);
+    for(octave_idx_type i=0; i<dv.ndims(); i++) n *= dv(i);
 
     if (dtype_info.size == H5T_VARIABLE) {        
         vector<char*> p(n);
@@ -623,17 +630,18 @@ octave_value hdf5oct::data_exchange::read_string_attr()
             lastError = "Error in call to H5Dvlen_reclaim";
             return octave_value();
         }
-        return octave_value(A);
+        return n > 1 ? octave_value(A) : octave_value(A(0));
     } else {
-        if (!(dv.ndims()==2 && dv.xelem(1)!=1)) {
-            lastError = "loading of multidimensional char arrays is not suppoted";
-            return octave_value();
-        }
         octave_idx_type sz = dtype_info.size;
-        dim_vector dv1(1,sz);
-        charNDArray A(dv1);
-        dset.read(A.fortran_vec(),dtype,from_dim_vector(dv1),dspace);
-        return octave_value(A);
+        vector<char> buff(n*sz,'\0');                
+        attr.read(dtype,buff.data());
+        Array<string> A(dv);
+        const char* p = buff.data();
+        for(octave_idx_type i = 0; i<n; i++) {
+            A(i) = string(p,sz);
+            p += sz;
+        }
+        return n > 1 ? octave_value(A) : octave_value(A(0));
     }
 }
 
@@ -711,4 +719,34 @@ bool hdf5oct::locationExists(const H5File& f, const std::string& loc)
     if (last_pos < loc.size()) return f.nameExists(loc);
     return true;
 }
+
+struct attr_iter_obj {
+    map<string, octave_value> M;    
+};
+
+void my_attr_op(H5::H5Object &loc, const H5std_string attr_name, void *operator_data)
+{
+    hdf5oct::data_exchange dx;
+    octave_value ov;
+    if (dx.set(loc.openAttribute(attr_name))) ov = dx.read_attribute();
+    if (operator_data) {
+        attr_iter_obj* obj = (attr_iter_obj*)operator_data;
+        obj->M[attr_name] = ov;
+    }
+}
+
+std::map<std::string, octave_value> hdf5oct::readAttributes(const H5::H5Object& obj)
+{
+    attr_iter_obj data;
+    try {
+        unsigned int idx = 0;
+        const_cast<H5::H5Object&>(obj).iterateAttrs(my_attr_op, &idx, &data);
+    }
+    catch (AttributeIException e) {
+        error("hdf5oct::readAttributes, %s",e.getCDetailMsg());
+    }
+    return data.M;
+}
+
+
 

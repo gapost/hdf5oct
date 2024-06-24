@@ -112,6 +112,8 @@ H5::DataType oct2hdf(const std::string& datatype);
  */
 bool locationExists(const H5::H5File& f, const std::string& loc);
 
+std::map<std::string, octave_value> readAttributes(const H5::H5Object& obj);
+
 struct dspace_info_t {
     std::string extent_type;
     uint64NDArray size;
@@ -138,7 +140,8 @@ struct dset_info_t {
     dtype_info_t dtype_info;
     dspace_info_t dspace_info;
     uint64NDArray chunksize;
-    octave_value fillValue;   
+    octave_value fillValue; 
+    std::map<std::string,octave_value> attributes;  
     void set(const H5::DataSet& ds, const std::string& path); 
     octave_scalar_map oct_map() const;
 };
@@ -165,6 +168,7 @@ struct group_info_t {
     std::vector<dset_info_t> datasets;
     std::vector<named_dtype_info_t> datatypes;
     std::vector<link_info_t> links;
+    std::map<std::string,octave_value> attributes;
     void set(const H5::Group& g, const std::string& path); 
     octave_scalar_map oct_map() const;
 };
