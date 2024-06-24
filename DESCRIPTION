@@ -5,7 +5,7 @@ Author: Tom Mullins, Anton Starikov, Thorsten Liebig, Stefan Großhauser
 Maintainer: Stefan Großhauser <Stefan.Grosshauser@uni-bayreuth.de>
 Categories: IO
 Title: a HDF5 wrapper for GNU Octave
-Url: https://github.com/stegro/hdf5oct
-Description: Currently this package provides a rather small number of
- function, in order to access datasets and attributes of HDF5 files.
+Url: https://github.com/gapost/hdf5oct
+Description: This package provides an interface compatible to MATLAB's 
+High-Level Functions for HDF5 files
 License: LGPLv3+
