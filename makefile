@@ -1,6 +1,5 @@
 CXX=h5c++
-
-octs=__h5create__.oct __h5write__.oct __h5read__.oct h5info.oct
+octs=__h5create__.oct __h5write__.oct __h5read__.oct h5info.oct __h5writeatt__.oct __h5readatt__.oct
 octsources := $(addsuffix .cc,$(basename $(OCTFILES)))
 
 H5FLAGS=$(shell octave --eval 'exit(__octave_config_info__ ("build_features").HDF5 != 1)' &> /dev/null && echo "-DHAVE_HDF5") \

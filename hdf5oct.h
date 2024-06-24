@@ -169,6 +169,7 @@ octave_scalar_map group_info(const H5::H5File& f, const std::string& path);
 struct data_exchange {
     octave_value ov;
     H5::DataSet dset;
+    H5::Attribute attr;
     H5::DataType dtype;
     dtype_info_t dtype_info;
     H5::DataSpace dspace;
@@ -178,6 +179,7 @@ struct data_exchange {
     std::string lastError;
     bool set(octave_value v);
     bool set(const H5::DataSet& ds);
+    bool set(const H5::Attribute& attr);
     bool isCompatible(const data_exchange& dx);
     bool isValid() const {
         return !(dtype_spec.empty() || dtype_spec=="unsupported");
@@ -188,12 +190,16 @@ struct data_exchange {
     bool selectHyperslab(uint64NDArray start, uint64NDArray count, uint64NDArray stride, bool tryResize);
 
     octave_value read();
+    octave_value read_attribute();
     void write(const data_exchange& dxfile);
+    bool write_as_attribute(const H5::H5Object& obj, const std::string& name);
 
 private:
     void reset();
 
     static H5::DataSpace from_dim_vector(const dim_vector& dv);
+
+    bool set(const H5::DataType& t, const H5::DataSpace& s);
 
     template<class T>
     octave_value read_impl()
@@ -201,8 +207,16 @@ private:
         typename h5traits<T>::OctaveArray A(dv);
         dset.read(A.fortran_vec(),h5traits<T>::predType(),from_dim_vector(dv),dspace);
         return octave_value(A);
-    }   
+    }  
+    template<class T>
+    octave_value read_attr_impl()
+    {
+        typename h5traits<T>::OctaveArray A(dv);
+        attr.read(dtype, A.fortran_vec());
+        return octave_value(A);
+    } 
     octave_value read_string();
+    octave_value read_string_attr();
 
     template<typename T>
     void write_impl(const data_exchange& dxfile) 
@@ -210,13 +224,15 @@ private:
         auto A = h5traits<T>::oct_array(ov);
         dxfile.dset.write(A.fortran_vec(), h5traits<T>::predType(), dspace, dxfile.dspace);    
     }
+    template<typename T>
+    void write_attr_impl(const H5::Attribute& att) 
+    {
+        auto A = h5traits<T>::oct_array(ov);
+        att.write(h5traits<T>::predType(), A.fortran_vec());    
+    }
     void write_string(const data_exchange& dxfile);
+    void write_string_attr(const H5::Attribute& attr);
 };
-
-
-
-
-
 
 
 

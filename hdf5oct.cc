@@ -378,6 +378,7 @@ void hdf5oct::data_exchange::reset()
     lastError = "";
     ov = octave_value();
     dset = DataSet();
+    attr = Attribute();
     dtype = DataType();
     dtype_info = dtype_info_t();
     dspace = DataSpace();
@@ -389,8 +390,20 @@ bool hdf5oct::data_exchange::set(const H5::DataSet& ds)
 {
     reset();
     dset = ds;
-    dtype = ds.getDataType();
-    dspace = ds.getSpace();
+    return set(ds.getDataType(), ds.getSpace());
+}
+
+bool hdf5oct::data_exchange::set(const H5::Attribute& aattr)
+{
+    reset();
+    attr = aattr;
+    return set(attr.getDataType(), attr.getSpace());       
+}
+
+bool hdf5oct::data_exchange::set(const H5::DataType& t, const H5::DataSpace& s)
+{
+    dtype = t;
+    dspace = s;
 
     // check datatype
     dtype_info.set(dtype); 
@@ -424,8 +437,9 @@ bool hdf5oct::data_exchange::set(const H5::DataSet& ds)
         }
     }
 
-    return true;
+    return true; 
 }
+
 bool hdf5oct::data_exchange::selectHyperslab(uint64NDArray start, 
 uint64NDArray count, uint64NDArray stride, bool tryExtend)
 {
@@ -577,6 +591,52 @@ octave_value hdf5oct::data_exchange::read_string()
     }
 }
 
+octave_value hdf5oct::data_exchange::read_attribute() {
+    octave_value ret;
+    if (dtype_spec=="double") ret = read_attr_impl<double>();
+    else if (dtype_spec=="single") ret = read_attr_impl<float>();
+    else if (dtype_spec=="uint64") ret = read_attr_impl<uint64_t>();
+    else if (dtype_spec=="int64") ret = read_attr_impl<int64_t>();
+    else if (dtype_spec=="uint32") ret = read_attr_impl<uint32_t>();
+    else if (dtype_spec=="int32") ret = read_attr_impl<int32_t>();
+    else if (dtype_spec=="uint16") ret = read_attr_impl<uint16_t>();
+    else if (dtype_spec=="int16") ret = read_attr_impl<int16_t>();
+    else if (dtype_spec=="uint8") ret = read_attr_impl<uint8_t>();
+    else if (dtype_spec=="int8") ret = read_attr_impl<int8_t>();
+    else if (dtype_spec=="string") ret = read_string_attr();
+    return ret;    
+}
+
+octave_value hdf5oct::data_exchange::read_string_attr() 
+{
+    octave_idx_type n = 1;
+    for(octave_idx_type i=0; i<dv.ndims(); i++) n *= dv.xelem(i);
+
+    if (dtype_info.size == H5T_VARIABLE) {        
+        vector<char*> p(n);
+        Array<string> A(dv); 
+        DataSpace memspace =  from_dim_vector(dv);  
+        attr.read(dtype,p.data());
+        for(octave_idx_type i = 0; i<n; i++) A(i) = p[i] ? string(p[i]) : string();
+        herr_t ret = H5Dvlen_reclaim (dtype.getId(), memspace.getId(), H5P_DEFAULT, p.data());       
+        if (ret < 0) {
+            lastError = "Error in call to H5Dvlen_reclaim";
+            return octave_value();
+        }
+        return octave_value(A);
+    } else {
+        if (!(dv.ndims()==2 && dv.xelem(1)!=1)) {
+            lastError = "loading of multidimensional char arrays is not suppoted";
+            return octave_value();
+        }
+        octave_idx_type sz = dtype_info.size;
+        dim_vector dv1(1,sz);
+        charNDArray A(dv1);
+        dset.read(A.fortran_vec(),dtype,from_dim_vector(dv1),dspace);
+        return octave_value(A);
+    }
+}
+
 octave_value hdf5oct::data_exchange::read() {
     octave_value ret;
     if (dtype_spec=="double") ret = read_impl<double>();
@@ -604,3 +664,35 @@ DataSpace hdf5oct::data_exchange::from_dim_vector(const dim_vector& dv) {
     for(int i=0; i<ndim; i++) dims[ndim-1-i]=dv(i);        
     return DataSpace(ndim, dims.data());
 }
+
+bool hdf5oct::data_exchange::write_as_attribute(const H5Object& obj, const string& name)
+{
+    if (obj.attrExists(name)) obj.removeAttr(name);
+
+    Attribute attr = obj.createAttribute(name, dtype, dspace);
+
+    if (dtype_spec=="double") write_attr_impl<double>(attr);
+    else if (dtype_spec=="single") write_attr_impl<float>(attr);
+    else if (dtype_spec=="uint64") write_attr_impl<uint64_t>(attr);
+    else if (dtype_spec=="int64") write_attr_impl<int64_t>(attr);
+    else if (dtype_spec=="uint32") write_attr_impl<uint32_t>(attr);
+    else if (dtype_spec=="int32") write_attr_impl<int32_t>(attr);
+    else if (dtype_spec=="uint16") write_attr_impl<uint16_t>(attr);
+    else if (dtype_spec=="int16") write_attr_impl<int16_t>(attr);
+    else if (dtype_spec=="uint8") write_attr_impl<uint8_t>(attr);
+    else if (dtype_spec=="int8") write_attr_impl<int8_t>(attr);
+    else if (dtype_spec=="string") write_string_attr(attr);
+
+    return true;
+
+}
+
+void hdf5oct::data_exchange::write_string_attr(const Attribute& attr)
+{
+    Array<string> A = ov.cellstr_value();
+    octave_idx_type n = A.numel();
+    vector<const char*> p(n);
+    for(octave_idx_type i=0; i<n; i++) p[i] = A(i).data();
+    attr.write(dtype,p.data());
+}
+
