@@ -48,37 +48,6 @@ using namespace std;
 using namespace H5;
 namespace h5o = hdf5oct;
 
-string datatype(const H5::DataType& dt) {
-    H5T_class_t dtc = dt.getClass();
-    switch (dt.getClass()) {
-        case H5T_INTEGER:
-            {
-                H5::IntType idt(dt.getId());
-                string s;
-                if (idt.getSign() == H5T_SGN_NONE) s = "uint";
-                else s="int";
-                size_t sz = idt.getSize();
-                if (sz<=8) {
-                    s += to_string(sz*8);
-                    return s;    
-                }    
-            }
-            break;
-        case H5T_FLOAT:
-            {
-                size_t sz = dt.getSize();
-                if (sz==8) return "double";
-                else if (sz==4) return "single";
-            }
-            break;
-        case H5T_STRING:
-            if (H5Tis_variable_str(dt.getId())>0) return "string";
-        default:
-            break;
-    }
-    return "unknown";
-}
-
 // h5write(filename,ds,data,start,count,stride)
 DEFUN_DLD(__h5write__, args, ,"__h5write__: backend for h5write\n\
 Users should not use this directly. Use h5write.m instead")
@@ -95,7 +64,7 @@ Users should not use this directly. Use h5write.m instead")
         H5File file(filename, H5F_ACC_RDWR);
 
         // check that location exists and is a dataset
-        if (file.nameExists(location)) {
+        if (h5o::locationExists(file,location)) {
             H5O_info_t obj_info;
             file.getObjinfo(location,obj_info);
             if (obj_info.type!=H5O_TYPE_DATASET) {

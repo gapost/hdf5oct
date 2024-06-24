@@ -84,12 +84,10 @@ info = h5info(filename,loc) returns information about the specified location in 
 
     try {
 
-        // H5::Exception::dontPrint();
-
-        //open the hdf5 file, create it if it does not exist
+        //open the hdf5 file with read-only access
         H5::H5File file(filename, H5F_ACC_RDONLY);
 
-        if (file.nameExists(location)) {
+        if (h5o::locationExists(file,location)) {
             H5O_info_t obj_info;
             file.getObjinfo(location,obj_info);
             switch (obj_info.type) {
@@ -101,12 +99,12 @@ info = h5info(filename,loc) returns information about the specified location in 
                     }
                     break;
                 case H5O_TYPE_DATASET:
-                    info = h5o::dset_info(file,location);
                     {
                         h5o::dset_info_t I;
                         I.set(file.openDataSet(location),location);
                         info = I.oct_map();
                     }
+                    break;
                 case H5O_TYPE_NAMED_DATATYPE:
                     break;
                 default:

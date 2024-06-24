@@ -63,7 +63,7 @@ Users should not use this directly. Use h5read.m instead")
         H5File file(filename, H5F_ACC_RDONLY);
 
         // check that location exists and that it is a dataset
-        if (file.nameExists(location)) {
+        if (h5o::locationExists(file,location)) {
             H5O_info_t obj_info;
             file.getObjinfo(location,obj_info);
             if (obj_info.type!=H5O_TYPE_DATASET) {

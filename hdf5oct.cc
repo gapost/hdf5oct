@@ -696,3 +696,19 @@ void hdf5oct::data_exchange::write_string_attr(const Attribute& attr)
     attr.write(dtype,p.data());
 }
 
+bool hdf5oct::locationExists(const H5File& f, const std::string& loc)
+{
+    // check for intermediate groups
+    string::size_type pos = loc.find_first_of('/'), last_pos = 0;
+    while (pos != string::npos) {
+        if (pos!=0) { // skip checking is root exists
+            string iloc = loc.substr(0,pos);
+            if (!f.nameExists(loc.substr(0,pos))) return false;
+        }
+        last_pos = pos+1;
+        pos = loc.find_first_of('/',last_pos);
+    }
+    if (last_pos < loc.size()) return f.nameExists(loc);
+    return true;
+}
+

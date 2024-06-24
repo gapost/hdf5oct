@@ -100,6 +100,18 @@ struct h5traits<int8_t> {
 
 H5::DataType oct2hdf(const std::string& datatype);
 
+/**
+ * @brief Check if a location exists in a HDF5 file.
+ * 
+ * If the location path contains intermediate groups, these are also checked.
+ * 
+ * @param f The HDF5 file object
+ * @param loc The location path
+ * @return true If the specified location exists
+ * @return false If the location or any intermediate groups do not exist
+ */
+bool locationExists(const H5::H5File& f, const std::string& loc);
+
 struct dspace_info_t {
     std::string extent_type;
     uint64NDArray size;
@@ -156,14 +168,6 @@ struct group_info_t {
     void set(const H5::Group& g, const std::string& path); 
     octave_scalar_map oct_map() const;
 };
-octave_scalar_map group_struct();
-octave_scalar_map dset_struct();
-octave_scalar_map dspace_struct();
-octave_scalar_map dtype_struct();
-octave_scalar_map dtype_info(const H5::DataType& dt);
-octave_scalar_map dspace_info(const H5::DataSpace& ds, bool* get_chunk=NULL);
-octave_scalar_map dset_info(const H5::H5File& f, const std::string& path);
-octave_scalar_map group_info(const H5::H5File& f, const std::string& path);
 
 
 struct data_exchange {

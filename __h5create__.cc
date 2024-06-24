@@ -69,23 +69,10 @@ Users should not use this directly. Use h5create.m instead")
         //open the hdf5 file, create it if it does not exist
         H5::H5File file(filename, create_file ? H5F_ACC_TRUNC : H5F_ACC_RDWR);
 
-        // check if location exists 
-        H5E_auto2_t func;
-        void* client_data;
-        H5::Exception::getAutoPrint(func,&client_data);
-        H5::Exception::dontPrint();
-        try {
-            if (file.nameExists(location)) {
+         if (h5o::locationExists(file,location)) {
                error("h5create: location '%s' already exists",location.c_str());
                return octave_value();
-            }
-        }
-        catch ( LocationException e) {
-            // do nothing
-            // the exception is raised if intermediate groups do not exist
-        }
-        H5::Exception::setAutoPrint(func,client_data);
-        
+            }        
 
          DataSpace fspace(H5S_SCALAR);
          size_t ndim = size.numel(); 

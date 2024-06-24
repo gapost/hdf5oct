@@ -78,7 +78,7 @@ Users should not use this directly. Use h5write.m instead")
         h5o::data_exchange dxfile;
         Attribute attr;
 
-        if (file.nameExists(location)) {
+        if (h5o::locationExists(file,location)) {
             H5O_info_t obj_info;
             file.getObjinfo(location,obj_info);
             switch (obj_info.type) {
