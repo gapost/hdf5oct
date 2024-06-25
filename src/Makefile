@@ -10,10 +10,9 @@ H5FLAGS=$(shell octave --eval 's="";if __octave_config_info__().build_features.H
 
 INCLUDES = $(shell octave -f --eval "printf ('%s', __octave_config_info__().build_environment.HDF5_CPPFLAGS)")
 LIBS = $(shell octave -f --eval "printf ('%s %s', __octave_config_info__().build_environment.HDF5_LDFLAGS, __octave_config_info__().build_environment.HDF5_LIBS)")
+LIB_H5_CPP = -lhdf5_cpp
 
-MKOCTFILE=mkoctfile -v $(H5FLAGS) $(INCLUDES) $(LIBS)
-
-VERSION=0.5.0
+MKOCTFILE=mkoctfile -v $(H5FLAGS) $(INCLUDES) $(LIBS) $(LIB_H5_CPP)
 
 .PHONY: test clean 
 
