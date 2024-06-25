@@ -13,6 +13,33 @@
 # data = h5read(filename,ds,start,count,stride) returns a subset of data with
 # the interval between the indices of each dimension of the dataset specified by stride.
 #
+# @table @asis
+# @item @var{filename}
+# Filename of an existing HDF5 file, specified as a string
+# @item @var{dsetname}
+# Dataset name, specified as a string scalar or character vector containing
+# the name of an existing dataset in the HDF5 file.
+# @item @var{start}
+# Starting location, specified as a numeric vector of positive integers.
+# For an n-dimensional dataset, start is a vector of length n containing 1-based
+# indices. The elements of start correspond, in order, to the dataset dimensions.
+# If any dimension of ds is unlimited, you must specify start.
+#
+# If you do not specify start, then the h5write function starts writing
+# to the dataset from the first index along each dimension.
+# @item @var{count}
+# Number of elements to write, specified as a numeric vector of positive integers. 
+# For an n-dimensional dataset, count is a vector of length n, 
+# specifying the number of elements to write to the dataset 
+# along each dimension. If any dimension of ds is unlimited, 
+# then count must be specified.
+# @item @var{stride}
+# Optional spacing between elements along each dimension. For an n-dimensional
+# dataset, stride is a vector of length n. A value of 1 reads without 
+# skipping elements in the corresponding dimension, a value of 
+# 2 reads every other element, and so on.
+# @end table
+#
 # @seealso{h5create, h5write}
 # @end deftypefn
 #

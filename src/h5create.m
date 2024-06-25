@@ -19,9 +19,8 @@
 ##    along with hdf5oct.  If not, see <http://www.gnu.org/licenses/>.
 ##
 
-#
 # -*- texinfo -*-
-# @deftypefn {Loadable Function} h5create (@var{filename}, @var{dsetname}, @var{size}, @var{key}, @var{val},...)
+# @deftypefn {Function File} { } h5create (@var{filename}, @var{dsetname}, @var{size}, @var{key}, @var{val},...)
 #
 # Create a dataset with name @var{dsetname} and size @var{size}
 # in the HDF5 file specified by @var{filename}.  Intermediate groups
@@ -53,7 +52,7 @@
 #
 # @seealso{h5write}
 # @end deftypefn
-#
+
 
 function h5create(filename,location,sz,varargin)
 

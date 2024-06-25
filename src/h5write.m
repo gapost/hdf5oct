@@ -28,10 +28,33 @@
 # then data is a numeric matrix containing floating-point or integer data.
 # Data must be non sparse, and must be the same size as the HDF5 dataset
 # if you do not specify start or count.
-# If a dimension in the dataset is unlimited, then the data to be written can be any size along that dimension.
+# If a dimension in the dataset is unlimited, then the data to be written
+# can be any size along that dimension.
 #
 # If "string" was specified as the datatype in the corresponding call to h5create,
-# data is a cell string array. The array dimensions must match those specified in the call to h5create.
+# data is a cell string array. The array dimensions must match those specified
+# in the call to h5create.
+#
+# @item @var{start}
+# Starting location, specified as a numeric vector of positive integers.
+# For an n-dimensional dataset, start is a vector of length n containing 1-based
+# indices. The elements of start correspond, in order, to the dataset dimensions.
+# If any dimension of ds is unlimited, you must specify start.
+#
+# If you do not specify start, then the h5write function starts writing
+# to the dataset from the first index along each dimension.
+#
+# @item @var{count}
+# Number of elements to write, specified as a numeric vector of positive integers. 
+# For an n-dimensional dataset, count is a vector of length n, 
+# specifying the number of elements to write to the dataset 
+# along each dimension. If any dimension of ds is unlimited, 
+# then count must be specified.
+# @item @var{stride}
+# Optional spacing between elements along each dimension. For an n-dimensional
+# dataset, stride is a vector of length n. A value of 1 writes without 
+# skipping elements in the corresponding dimension, a value of 
+# 2 writes every other element, and so on.
 # @end table
 #
 # @seealso{h5create}

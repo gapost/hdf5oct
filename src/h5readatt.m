@@ -1,12 +1,23 @@
 # -*- texinfo -*-
-# @deftypefn {Function File} {@var{attval}=} h5readatt (@var{filename}, @var{loc}, @var{attr})  
+# @deftypefn {Function File} {@var{att_val}=} h5readatt (@var{filename},
+# @var{location}, @var{attr})
 #
-# Retrieves the value of the specified attribute named @var{attr} from the specified 
-# location @var{loc} in the HDF5 file @var{filename}.
+# Retrieves the value of the specified attribute named @var{attr}
+# from the specified location @var{location} in the HDF5 file @var{filename}.
 #
-# @var{loc} is either a Group, Dataset or named DataType in the HDF5 file structure.
+# @table @asis
+# @item @var{filename}
+# Filename of an existing HDF5 file, specified as a string
+# @item @var{location}
+# The path to an existing node in the HDF5 file, which can be either a Group,
+# a Dataset or a Named DataType. The root group, "/", is also valid.
+# @item @var{attr}
+# Name of attribute, specified as a string scalar.
+# @item @var{att_val}
+# Value of the attribute read from the file.
+# @end table
 #
-# @seealso{h5readatt}
+# @seealso{h5writeatt}
 # @end deftypefn
 #
 

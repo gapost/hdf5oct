@@ -1,11 +1,23 @@
 # -*- texinfo -*-
-# @deftypefn {Function File} { } h5writeatt (@var{filename}, @var{loc}, @var{attr}, @var{val})  
+# @deftypefn {Function File} { } h5writeatt (@var{filename}, @var{location}, @var{attr}, @var{val})
 #
 # Write attribute to HDF5 file.
-# Writes an attribute named @var{attr} with a value of @var{val} to the specified location @var{loc} 
-# in the HDF5 file named @var{filename}.
 #
-# @var{loc} is either a Group, Dataset or named DataType in the HDF5 file structure.
+# @table @asis
+# @item @var{filename}
+# Filename of an existing HDF5 file, specified as a string
+# @item @var{location}
+# The path to an existing node in the HDF5 file, which can be either a Group,
+# a Dataset or a Named DataType. The root group, "/", is also valid.
+# @item @var{attr}
+# Name of attribute, specified as a string scalar. If the attribute does not exist,
+# h5writeatt creates the attribute with the name specified. If the specified
+# attribute already exists, it will be overwritten.
+# @item @var{val}
+# Value of the attribute to be written. It can be a scalar or array variable,
+# numeric or string (UTF8 by default). The HDF5 standard suggests that
+# attributes should be small in size.
+# @end table
 #
 # @seealso{h5readatt}
 # @end deftypefn
