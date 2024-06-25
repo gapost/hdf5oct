@@ -1,21 +1,23 @@
-CXX=h5c++
+
 octs=__h5create__.oct __h5write__.oct __h5read__.oct h5info.oct __h5writeatt__.oct __h5readatt__.oct
 octsources := $(addsuffix .cc,$(basename $(OCTFILES)))
 
-H5FLAGS=$(shell octave --eval 'exit(__octave_config_info__ ("build_features").HDF5 != 1)' &> /dev/null && echo "-DHAVE_HDF5") \
-        $(shell octave --eval 'exit(__octave_config_info__ ("build_features").HDF5_18 != 1)' &> /dev/null && echo "-DHAVE_HDF5_18") \
-		$(shell octave --eval 'exit(__octave_config_info__ ("build_features").HDF5_H != 1)' &> /dev/null && echo "-DHAVE_HDF5_H") \
-		$(shell octave --eval 'exit(__octave_config_info__ ("build_features").HDF5_INT2FLOAT_CONVERSIONS != 1)' &> /dev/null && echo "-DHAVE_HDF5_INT2FLOAT_CONVERSIONS") \
-		$(shell octave --eval 'exit(__octave_config_info__ ("build_features").HDF5_UTF8 != 1)' &> /dev/null && echo "-DHAVE_HDF5_UTF8")
+H5FLAGS=$(shell octave --eval 's="";if __octave_config_info__().build_features.HDF5==1,s="-DHDF5",end;printf(s)') \
+		$(shell octave --eval 's="";if __octave_config_info__().build_features.HDF5_18==1,s="-DHDF5_18",end;printf(s)') \
+		$(shell octave --eval 's="";if __octave_config_info__().build_features.HDF5_H==1,s="-DHDF5_H",end;printf(s)') \
+		$(shell octave --eval 's="";if __octave_config_info__().build_features.HDF5_INT2FLOAT_CONVERSIONS==1,s="-DHAVE_HDF5_INT2FLOAT_CONVERSIONS",end;printf(s)') \
+		$(shell octave --eval 's="";if __octave_config_info__().build_features.HDF5_UTF8==1,s="-DHDF5_UTF8",end;printf(s)')
 
-MKOCTFILE=CXX="$(CXX)" CXXFLAGS="-ansi -std=c++11 -shlib" mkoctfile -v $(H5FLAGS)
+INCLUDES = $(shell octave -f --eval "printf ('%s', __octave_config_info__().build_environment.HDF5_CPPFLAGS)")
+LIBS = $(shell octave -f --eval "printf ('%s %s', __octave_config_info__().build_environment.HDF5_LDFLAGS, __octave_config_info__().build_environment.HDF5_LIBS)")
+
+MKOCTFILE=mkoctfile -v $(H5FLAGS) $(INCLUDES) $(LIBS)
 
 VERSION=0.5.0
-PACKAGEFILE=hdf5oct-$(VERSION).tar.gz
 
-.PHONY: test clean install uninstall package
+.PHONY: test clean 
 
-all: $(octs) package
+all: $(octs)
 
 hdf5oct.o : hdf5oct.cc hdf5oct.h
 	$(MKOCTFILE) -c hdf5oct.cc
@@ -24,26 +26,7 @@ hdf5oct.o : hdf5oct.cc hdf5oct.h
 	$(MKOCTFILE) $< hdf5oct.o
 
 clean:
-	rm -f *.o *.oct package/inst/* test/test*.h5 $(PACKAGEFILE)
-
-install: $(PACKAGEFILE)
-	@echo "-- Install Octave Package ------------"
-	octave --silent --no-gui --eval "pkg install $(PACKAGEFILE)"
-
-uninstall:
-	@echo "-- Uninstall Octave Package ----------"
-	octave --silent --no-gui --eval "pkg uninstall hdf5oct"
-
-package: $(PACKAGEFILE)
-
-cp-octave:
-	cp h5read.{cc,h} $(HOME)/build/octave/libinterp/dldfcn/
-
-$(PACKAGEFILE): $(octs)
-	@echo "-- Create Octave Package Archive ------------"
-	mkdir -p package/inst
-	cp *.oct package/inst
-	tar -czf $(PACKAGEFILE) package/
+	rm -f *.o *.oct 
 
 # TESTING ###########
 
