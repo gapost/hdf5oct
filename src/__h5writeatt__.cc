@@ -45,7 +45,7 @@
 #include "hdf5oct.h"
 
 using namespace std;
-using namespace H5;
+namespace H5 = HighFive;
 namespace h5o = hdf5oct;
 
 // h5writeatt(filename,location,attr,val)
@@ -59,7 +59,7 @@ Users should not use this directly. Use h5write.m instead")
 
     try {
 
-        H5File file(filename, H5F_ACC_RDWR);
+        H5::File file(filename, H5::File::ReadWrite);
 
         h5o::data_exchange dxmem;
         if (!dxmem.set(data)) {
@@ -68,29 +68,28 @@ Users should not use this directly. Use h5write.m instead")
         }
 
         if (h5o::locationExists(file,location)) {
-            H5O_info_t obj_info;
-            file.getObjinfo(location,obj_info);
-            switch (obj_info.type) {
-                case H5O_TYPE_GROUP:
-                    if (!dxmem.write_as_attribute(file.openGroup(location),attrname))
+            switch (file.getObjectType(location)) {
+                case H5::ObjectType::Group:
                     {
-                        error("h5writeatt: could not write attr: %s",dxmem.lastError.c_str());
-                        return octave_value();
+                        H5::Group g = file.getGroup(location);
+                        if (!dxmem.write_as_attribute(g,attrname))
+                        {
+                            error("h5writeatt: could not write attr: %s",dxmem.lastError.c_str());
+                            return octave_value();
+                        }
                     }
                     break;
-                case H5O_TYPE_DATASET:
-                    if (!dxmem.write_as_attribute(file.openDataSet(location),attrname))
+                case H5::ObjectType::Dataset:
                     {
-                        error("h5writeatt: could not write attr: %s",dxmem.lastError.c_str());
-                        return octave_value();
+                        H5::DataSet dset = file.getDataSet(location);
+                        if (!dxmem.write_as_attribute(dset,attrname))
+                        {
+                            error("h5writeatt: could not write attr: %s",dxmem.lastError.c_str());
+                            return octave_value();
+                        }
                     }
                     break;
-                case H5O_TYPE_NAMED_DATATYPE:
-                    if (!dxmem.write_as_attribute(file.openDataType(location),attrname))
-                    {
-                        error("h5writeatt: could not write attr: %s",dxmem.lastError.c_str());
-                        return octave_value();
-                    }
+                case H5::ObjectType::UserDataType:
                     break;
                 default:
                     break;
@@ -103,35 +102,10 @@ Users should not use this directly. Use h5write.m instead")
         return octave_value();
 
     }
-   // catch failure caused by the H5File operations
-   catch( FileIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
- 
-   // catch failure caused by the DataSet operations
-   catch( DataSetIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
- 
-   // catch failure caused by the DataSpace operations
-   catch( DataSpaceIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
- 
-   // catch failure caused by the DataSpace operations
-   catch( DataTypeIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
-
-   // catch failure caused by the DataSpace operations
-   catch( AttributeIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
+   catch (const H5::Exception& err) {
+        // catch and print any HDF5 error
+        error("%s",err.what());
+    }
   
   return octave_value ();
 

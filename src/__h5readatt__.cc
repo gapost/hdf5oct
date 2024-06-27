@@ -45,17 +45,19 @@
 #include "hdf5oct.h"
 
 using namespace std;
-using namespace H5;
+namespace H5 = HighFive;
 namespace h5o = hdf5oct;
 
-octave_value read_attr(const H5Object& obj, const string& attrname)
+template<class H5Obj>
+octave_value read_attr(const H5Obj& obj, const string& attrname)
 {
-    if (!obj.attrExists(attrname)) {
+    if (!obj.hasAttribute(attrname)) {
         error("h5readatt: attribute %s does not exist",attrname.c_str());
         return octave_value();
     }
     h5o::data_exchange dx;
-    if (!dx.set(obj.openAttribute(attrname))) {
+    H5::Attribute attr = obj.getAttribute(attrname);
+    if (!dx.set(&attr)) {
         error("h5readatt: attribute %s: %s", attrname.c_str(), 
                                             dx.lastError.c_str());
         return octave_value();
@@ -73,21 +75,21 @@ Users should not use this directly. Use h5write.m instead")
 
     try {
 
-        H5File file(filename, H5F_ACC_RDONLY);
-
-        h5o::data_exchange dxfile;
-        Attribute attr;
+        H5::File file(filename, H5::File::ReadOnly);
 
         if (h5o::locationExists(file,location)) {
-            H5O_info_t obj_info;
-            file.getObjinfo(location,obj_info);
-            switch (obj_info.type) {
-                case H5O_TYPE_GROUP:
-                    return read_attr(file.openGroup(location),attrname);
-                case H5O_TYPE_DATASET:
-                    return read_attr(file.openDataSet(location),attrname);
-                case H5O_TYPE_NAMED_DATATYPE:
-                    return read_attr(file.openDataType(location),attrname);
+            switch (file.getObjectType(location)) {
+                case H5::ObjectType::Group:
+                    {
+                        H5::Group g = file.getGroup(location);
+                        return read_attr(g,attrname);
+                    }
+                case H5::ObjectType::Dataset:
+                    {
+                        H5::DataSet dset = file.getDataSet(location);
+                        return read_attr(dset,attrname);
+                    }
+                case H5::ObjectType::UserDataType:
                 default:
                     break;
             }
@@ -99,41 +101,10 @@ Users should not use this directly. Use h5write.m instead")
         return octave_value();
 
     }
-   // catch failure caused by the H5File operations
-   catch( FileIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
- 
-   // catch failure caused by the DataSet operations
-   catch( DataSetIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
- 
-   // catch failure caused by the DataSpace operations
-   catch( DataSpaceIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
- 
-   // catch failure caused by the DataSpace operations
-   catch( DataTypeIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
-
-   // catch failure caused by the DataSpace operations
-   catch( AttributeIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
-
-   // catch failure caused by the location operations
-   catch( LocationException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
+   catch (const H5::Exception& err) {
+        // catch and print any HDF5 error
+        error("%s",err.what());
+    }
   
   return octave_value ();
 

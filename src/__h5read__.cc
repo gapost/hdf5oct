@@ -45,7 +45,7 @@
 #include "hdf5oct.h"
 
 using namespace std;
-using namespace H5;
+namespace H5 = HighFive;
 namespace h5o = hdf5oct;
 
 // data = h5read(filename,dsname,start,count,stride)
@@ -60,24 +60,23 @@ Users should not use this directly. Use h5read.m instead")
 
     try {
 
-        H5File file(filename, H5F_ACC_RDONLY);
+        H5::File file(filename, H5::File::ReadOnly);
 
         // check that location exists and that it is a dataset
         if (h5o::locationExists(file,location)) {
-            H5O_info_t obj_info;
-            file.getObjinfo(location,obj_info);
-            if (obj_info.type!=H5O_TYPE_DATASET) {
-                error("h5read: location '%s' is not a Dataset",location.c_str());
+            if (file.getObjectType(location)!=H5::ObjectType::Dataset) {
+                error("h5write: location '%s' is not a Dataset",location.c_str());
                 return octave_value();
             }
         } else {
-            error("h5read: location %s does not exist",location.c_str());
+            error("h5write: location %s does not exist",location.c_str());
             return octave_value();
         }
 
         // Create file dx struct
         h5o::data_exchange dxfile;
-        if (!dxfile.set(file.openDataSet(location))) {
+        H5::DataSet dset = file.getDataSet(location);
+        if (!dxfile.set(&dset)) {
             error("h5write: dataset %s: %s", location.c_str(), 
                                               dxfile.lastError.c_str());
             return octave_value();
@@ -94,29 +93,10 @@ Users should not use this directly. Use h5read.m instead")
         return ret;
 
     }
-   // catch failure caused by the H5File operations
-   catch( FileIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
- 
-   // catch failure caused by the DataSet operations
-   catch( DataSetIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
- 
-   // catch failure caused by the DataSpace operations
-   catch( DataSpaceIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
- 
-   // catch failure caused by the DataSpace operations
-   catch( DataTypeIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
+   catch (const H5::Exception& err) {
+        // catch and print any HDF5 error
+        error("%s",err.what());
+    }
   
   return octave_value ();
 

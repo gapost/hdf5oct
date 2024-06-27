@@ -45,7 +45,7 @@
 #include "hdf5oct.h"
 
 using namespace std;
-using namespace H5;
+namespace H5 = HighFive;
 namespace h5o = hdf5oct;
 
 // __h5create__(fname,create_file,loc,sz,datatype,chunksize,fillvalue)
@@ -67,37 +67,37 @@ Users should not use this directly. Use h5create.m instead")
         // H5::Exception::dontPrint();
 
         //open the hdf5 file, create it if it does not exist
-        H5::H5File file(filename, create_file ? H5F_ACC_TRUNC : H5F_ACC_RDWR);
+        H5::File file(filename, create_file ? H5::File::Create : H5::File::ReadWrite);
 
          if (h5o::locationExists(file,location)) {
                error("h5create: location '%s' already exists",location.c_str());
                return octave_value();
             }        
 
-         DataSpace fspace(H5S_SCALAR);
+         H5::DataSpace fspace = H5::DataSpace::Scalar();
          size_t ndim = size.numel(); 
-         bool is_scalar = (ndim==1 && hsize_t(size(0))==1) ||
-                           (ndim==2 && hsize_t(size(0))==1 & hsize_t(size(1))==1);
+         bool is_scalar = (ndim==1 && size_t(size(0))==1) ||
+                           (ndim==2 && size_t(size(0))==1 & size_t(size(1))==1);
          if (!is_scalar) {
-            std::vector<hsize_t> dims(ndim), maxdims(ndim);
+            vector<size_t> dims(ndim), maxdims(ndim);
             for(int i=0; i<ndim; i++) {
-               bool b = hsize_t(size(i)) == H5S_UNLIMITED;
-               dims[ndim-1-i] = b ? 0 : hsize_t(size(i));
-               maxdims[ndim-1-i] = b ? H5S_UNLIMITED : hsize_t(size(i));
+               bool b = size_t(size(i)) == H5::DataSpace::UNLIMITED;
+               dims[ndim-1-i] = b ? 0 : size_t(size(i));
+               maxdims[ndim-1-i] = size_t(size(i));
             }
-            fspace = DataSpace(ndim, dims.data(), maxdims.data());
+            fspace = H5::DataSpace(dims, maxdims);
          }
 
         /*
         * Modify dataset creation properties, i.e. enable chunking.
         */
-        DSetCreatPropList dscp;
-        std::vector<hsize_t> chunk_dims(ndim);
+        H5::DataSetCreateProps dscp;
 
-        if (has_unlimited) {            
-            for(int i=0; i<ndim; i++) chunk_dims[ndim-1-i] = chunksize(i);
-            dscp.setChunk( ndim, chunk_dims.data() );
-        }
+      if (has_unlimited) { 
+         vector<hsize_t> chunk_dims(ndim);  
+         for(int i=0; i<ndim; i++) chunk_dims[ndim-1-i] = chunksize(i);
+            dscp.add(H5::Chunking(chunk_dims));         
+      }
  
         /*
         * Set fill value for the dataset
@@ -108,34 +108,13 @@ Users should not use this directly. Use h5create.m instead")
         * Create a new dataset within the file using dscp
         * creation properties.
         */
-        LinkCreatPropList lcpl;
-        lcpl.setCreateIntermediateGroup(true);
-        file.createDataSet(location, h5o::oct2hdf(datatype), fspace, dscp,
-                            DSetAccPropList::DEFAULT, lcpl);
+       file.createDataSet(location,fspace,h5o::h5type_from_spec(datatype),dscp);
     }
-   // catch failure caused by the H5File operations
-   catch( FileIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
- 
-   // catch failure caused by the DataSet operations
-   catch( DataSetIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
- 
-   // catch failure caused by the DataSpace operations
-   catch( DataSpaceIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
- 
-   // catch failure caused by the DataSpace operations
-   catch( DataTypeIException e )
-   {
-      error("%s",e.getCDetailMsg());
-   }
+    catch (const H5::Exception& err) {
+        // catch and print any HDF5 error
+        error("%s",err.what());
+    }
+
   
   return octave_value ();
 
