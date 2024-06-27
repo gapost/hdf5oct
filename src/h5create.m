@@ -38,9 +38,9 @@
 #
 # @table @asis
 # @item @option{Datatype}
-# one of the strings: 
-# @samp{double}(default) | @samp{single} | @samp{uint64} | @samp{uint32} | 
-# @samp{uint16} | @samp{uint8} | @samp{int64} | @samp{int32} | @samp{int16} | 
+# one of the strings:
+# @samp{double}(default) | @samp{single} | @samp{uint64} | @samp{uint32} |
+# @samp{uint16} | @samp{uint8} | @samp{int64} | @samp{int32} | @samp{int16} |
 # @samp{int8} | 'string'
 # @item @option{ChunkSize}
 # The value may be either a vector specifying the chunk size,
@@ -106,7 +106,7 @@ endif
 if !isindex(sz) && isempty(chunksize)
   error("h5create: chunksize must be defined for inf size datasets");
 endif
-if !isempty(chunksize) 
+if !isempty(chunksize)
   if size(chunksize(:))!=size(sz),
     error("h5create: chunksize is different size from 3rd argument");
   end
@@ -125,4 +125,98 @@ end
 
 __h5create__(filename,create_file,location,sz,datatype,chunksize,fillvalue);
 
+# tests for all functions in package
 
+%!shared fname
+%! fname =  tempname ();
+
+%!function y = test1(fname,loc,x,type,size)
+%!  # create, write, read
+%!  h5create(fname,loc,size,'datatype',type);
+%!  h5write(fname,loc,x);
+%!  y=h5read(fname,loc);
+%!endfunction
+
+%!test
+%! x = uint32(1:10);
+%! y = test1(fname,'/T1/D1',x,'uint32',size(x));
+%! assert (x, y);
+
+%!test
+%! x = int64(1:10);
+%! x = x';
+%! y = test1(fname,'/T1/D2',x,'int64',size(x));
+%! assert (x, y);
+
+%!test
+%! x = reshape(1:150,10,15);
+%! y = test1(fname,'/T1/D3',x,'double',size(x));
+%! assert (x, y);
+
+%!test
+%! x = {"ένα"; "δύο"; "τρία"; "τέσσερα"; "πέντε"};
+%! y = test1(fname,'/T1/D4',x,'string',size(x));
+%! assert (x, y);
+
+%!test
+%! x = "Single string";
+%! y = test1(fname,'/T1/D5',x,'string',1);
+%! assert (x, y);
+
+%!function y = test2(fname,loc,x,size,chunk,start,count,stride)
+%!  # create, write, read
+%!  h5create(fname,loc,size,'chunksize',chunk);
+%!  h5write(fname,loc,x,start,count,stride);
+%!  y=h5read(fname,loc,start,count,stride);
+%!endfunction
+
+%!test
+%! loc = 'T2/G1/G2/D1';
+%! x = reshape(1:80,10,8);
+%! size = [Inf 15];
+%! chunk = [5 15];
+%! start = [11 1];
+%! count = [10 8];
+%! stride = [1 2];
+%! y = test2(fname,loc,x,size,chunk,start,count,stride);
+%! assert(x,y);
+
+%!test
+%! loc = '/T2/D4';
+%! x = reshape(1:60,3,4,5);
+%! sz = [3 4 Inf];
+%! chunk = [3 4 1];
+%! h5create(fname,loc,sz,'chunksize',chunk);
+%! h5write(fname,loc,x,[1 1 1],size(x));
+%! start = [1 1 1];
+%! count = [3 4 3];
+%! stride = [1 1 2];
+%! y=h5read(fname,loc,start,count,stride);
+%! assert(x(:,:,1:2:5),y)
+
+%!function y = test3(fname,loc,attr,x)
+%!  # write & read attr
+%!  h5writeatt(fname,loc,attr,x);
+%!  y=h5readatt(fname,loc,attr);
+%!endfunction
+
+%!test
+%! loc = '/T2/G1/G2/D1';
+%! attr = 'A1';
+%! x = 1:10;
+%! y = test3(fname,loc,attr,x);
+%! assert(x,y);
+
+%!test
+%! loc = '/T2/G1/G2';
+%! attr = 'A2';
+%! x = "Χαρακτηριστικό";
+%! y = test3(fname,loc,attr,x);
+%! assert(x,y);
+
+%!test
+%! loc = '/T2/G1';
+%! attr = 'A3';
+%! x = {"1ο Χαρακτηριστικό"; "2ο Χαρακτηριστικό"};
+%! y = test3(fname,loc,attr,x);
+%! assert(x,y);
