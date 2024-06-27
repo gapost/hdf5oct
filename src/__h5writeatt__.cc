@@ -62,7 +62,7 @@ Users should not use this directly. Use h5write.m instead")
         H5::File file(filename, H5::File::ReadWrite);
 
         h5o::data_exchange dxmem;
-        if (!dxmem.set(data)) {
+        if (!dxmem.assign(data)) {
             error("h5writeatt: data value val: %s",dxmem.lastError.c_str());
             return octave_value();
         }

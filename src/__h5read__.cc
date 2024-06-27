@@ -76,7 +76,7 @@ Users should not use this directly. Use h5read.m instead")
         // Create file dx struct
         h5o::data_exchange dxfile;
         H5::DataSet dset = file.getDataSet(location);
-        if (!dxfile.set(&dset)) {
+        if (!dxfile.assign(&dset)) {
             error("h5write: dataset %s: %s", location.c_str(), 
                                               dxfile.lastError.c_str());
             return octave_value();

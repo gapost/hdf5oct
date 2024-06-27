@@ -92,14 +92,14 @@ info = h5info(filename,loc) returns information about the specified location in 
                 case H5::ObjectType::Group:
                     {
                         h5o::group_info_t I;
-                        I.set(file.getGroup(location),location);
+                        I.assign(file.getGroup(location),location);
                         info = I.oct_map();
                     }
                     break;
                 case H5::ObjectType::Dataset:
                     {
                         h5o::dset_info_t I;
-                        I.set(file.getDataSet(location),location);
+                        I.assign(file.getDataSet(location),location);
                         info = I.oct_map();
                     }
                     break;

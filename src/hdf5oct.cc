@@ -82,7 +82,7 @@ string h5_concat_path(const string& path, const string& obj_name)
     return p;
 }
 
-void hdf5oct::dspace_info_t::set(const H5::DataSpace& ds) {
+void hdf5oct::dspace_info_t::assign(const H5::DataSpace& ds) {
     int ndim;
     switch (H5Sget_simple_extent_type(ds.getId())) {
       case H5S_SIMPLE:
@@ -132,7 +132,7 @@ bool hdf5oct::dspace_info_t::needs_chunk() const {
     return false;
 }
 
-void hdf5oct::dtype_info_t::set(const H5::DataType& dt) {
+void hdf5oct::dtype_info_t::assign(const H5::DataType& dt) {
     string s = dt.string();
     switch (dt.getClass()) {
         case H5::DataTypeClass::Integer:
@@ -227,11 +227,11 @@ octave_scalar_map hdf5oct::dtype_info_t::oct_map() const {
     if (!pading.empty()) M["Pading"]=pading;
     return octave_scalar_map(M);
 }
-void hdf5oct::dset_info_t::set(const H5::DataSet& ds, const string& path) {
+void hdf5oct::dset_info_t::assign(const H5::DataSet& ds, const string& path) {
     name = path;  
     H5::DataType dt = ds.getDataType();
-    dtype_info.set(dt); 
-    dspace_info.set(ds.getSpace());
+    dtype_info.assign(dt); 
+    dspace_info.assign(ds.getSpace());
     if (dspace_info.needs_chunk()) {        
         H5::DataSetCreateProps dscpl = ds.getCreatePropertyList();
         H5::Chunking chunking(dscpl);
@@ -254,7 +254,7 @@ octave_scalar_map hdf5oct::dset_info_t::oct_map() const {
     M["Attributes"] = attributes;
     return octave_scalar_map(M);
 }
-void hdf5oct::group_info_t::set(const H5::Group& g, const string& path) {
+void hdf5oct::group_info_t::assign(const H5::Group& g, const string& path) {
     name = path;
     size_t n = g.getNumberObjects();
     vector<string> group_names, ds_names,dt_names,link_names;
@@ -266,7 +266,7 @@ void hdf5oct::group_info_t::set(const H5::Group& g, const string& path) {
             case H5::ObjectType::Group:
                 {
                     group_info_t info;
-                    info.set(g.getGroup(obj_name),
+                    info.assign(g.getGroup(obj_name),
                              h5_concat_path(path,obj_name));
                     groups.push_back(info);   
                 }
@@ -274,7 +274,7 @@ void hdf5oct::group_info_t::set(const H5::Group& g, const string& path) {
             case H5::ObjectType::Dataset:
                 {
                     dset_info_t info;
-                    info.set(g.getDataSet(obj_name),
+                    info.assign(g.getDataSet(obj_name),
                              h5_concat_path(path,obj_name)); 
                     datasets.push_back(info);   
                 }
@@ -282,7 +282,7 @@ void hdf5oct::group_info_t::set(const H5::Group& g, const string& path) {
             case H5::ObjectType::UserDataType:
                 {
                     named_dtype_info_t info;
-                    info.set(g.getDataType(obj_name),
+                    info.assign(g.getDataType(obj_name),
                              h5_concat_path(path,obj_name)); 
                     datatypes.push_back(info);   
                 }
@@ -377,27 +377,27 @@ void hdf5oct::data_exchange::reset()
     dtype_spec = "";    
 }
 
-bool hdf5oct::data_exchange::set(H5::DataSet* ds)
+bool hdf5oct::data_exchange::assign(H5::DataSet* ds)
 {
     reset();
     dset = ds;
-    return set(ds->getDataType(), ds->getSpace());
+    return assign(ds->getDataType(), ds->getSpace());
 }
 
-bool hdf5oct::data_exchange::set(const H5::Attribute* aattr)
+bool hdf5oct::data_exchange::assign(const H5::Attribute* aattr)
 {
     reset();
     attr = aattr;
-    return set(attr->getDataType(), attr->getSpace());       
+    return assign(attr->getDataType(), attr->getSpace());       
 }
 
-bool hdf5oct::data_exchange::set(const H5::DataType& t, const H5::DataSpace& s)
+bool hdf5oct::data_exchange::assign(const H5::DataType& t, const H5::DataSpace& s)
 {
     dtype = t;
     dspace = s;
 
     // check datatype
-    dtype_info.set(dtype); 
+    dtype_info.assign(dtype); 
     if (dtype_info.h5class.empty()) {
         lastError = "Invalid HDF5 datatype";
         return false;
@@ -412,7 +412,7 @@ bool hdf5oct::data_exchange::set(const H5::DataType& t, const H5::DataSpace& s)
     
 
     // check dataspace
-    dspace_info.set(dspace);
+    dspace_info.assign(dspace);
     if (dspace_info.extent_type.empty() ||
         dspace_info.isNull()) {
         lastError = "Empty HDF5 dataspace";
@@ -480,7 +480,7 @@ uint64NDArray count, uint64NDArray stride, bool tryExtend)
     return true;
 }
 
-bool hdf5oct::data_exchange::set(octave_value v) {
+bool hdf5oct::data_exchange::assign(octave_value v) {
         
     reset();
 
@@ -522,7 +522,7 @@ bool hdf5oct::data_exchange::set(octave_value v) {
         for(int i=0; i<ndim; i++) dims[ndim-1-i]=dv(i);        
         dspace = H5::DataSpace(dims);
     } 
-    dspace_info.set(dspace);
+    dspace_info.assign(dspace);
 
     ov = v;
 

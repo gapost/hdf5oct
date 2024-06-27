@@ -35,8 +35,7 @@
 
 namespace hdf5oct {
 
-template <typename T> struct h5traits;
-
+// Predefined HDF5 types 
 struct predtype {
     static HighFive::AtomicType<double> NATIVE_DOUBLE;
     static HighFive::AtomicType<float> NATIVE_FLOAT;
@@ -51,67 +50,71 @@ struct predtype {
     static HighFive::VariableLengthStringType DEFAULT_STRING_TYPE;
 };
 
+// Helper type traits template
+template <typename T> struct h5traits;
+
 template<>
 struct h5traits<double> {
     typedef NDArray OctaveArray;
-    static OctaveArray oct_array(octave_value v) { return v.array_value(); }
+    static OctaveArray toOctaveArray(octave_value v) { return v.array_value(); }
     static const HighFive::DataType& predType() { return predtype::NATIVE_DOUBLE; }
 };
 template<>
 struct h5traits<float> {
     typedef FloatNDArray OctaveArray;
-    static OctaveArray oct_array(octave_value v) { return v.float_array_value(); }
+    static OctaveArray toOctaveArray(octave_value v) { return v.float_array_value(); }
     static const HighFive::DataType& predType() { return predtype::NATIVE_FLOAT; }
 };
 template<>
 struct h5traits<uint64_t> {
     typedef uint64NDArray OctaveArray;
-    static OctaveArray oct_array(octave_value v) { return v.uint64_array_value(); }
+    static OctaveArray toOctaveArray(octave_value v) { return v.uint64_array_value(); }
     static const HighFive::DataType& predType() { return predtype::NATIVE_UINT64; }
 };
 template<>
 struct h5traits<uint32_t> {
     typedef uint32NDArray OctaveArray;
-    static OctaveArray oct_array(octave_value v) { return v.uint32_array_value(); }
+    static OctaveArray toOctaveArray(octave_value v) { return v.uint32_array_value(); }
     static const HighFive::DataType& predType() { return predtype::NATIVE_UINT32; }
 };
 template<>
 struct h5traits<uint16_t> {
     typedef uint16NDArray OctaveArray;
-    static OctaveArray oct_array(octave_value v) { return v.uint16_array_value(); }
+    static OctaveArray toOctaveArray(octave_value v) { return v.uint16_array_value(); }
     static const HighFive::DataType& predType() { return predtype::NATIVE_UINT16; }
 };
 template<>
 struct h5traits<uint8_t> {
     typedef uint8NDArray OctaveArray;
-    static OctaveArray oct_array(octave_value v) { return v.uint8_array_value(); }
+    static OctaveArray toOctaveArray(octave_value v) { return v.uint8_array_value(); }
     static const HighFive::DataType& predType() { return predtype::NATIVE_UINT8; }
 };
 template<>
 struct h5traits<int64_t> {
     typedef int64NDArray OctaveArray;
-    static OctaveArray oct_array(octave_value v) { return v.int64_array_value(); }
+    static OctaveArray toOctaveArray(octave_value v) { return v.int64_array_value(); }
     static const HighFive::DataType& predType() { return predtype::NATIVE_INT64; }
 };
 template<>
 struct h5traits<int32_t> {
     typedef int32NDArray OctaveArray;
-    static OctaveArray oct_array(octave_value v) { return v.int32_array_value(); }
+    static OctaveArray toOctaveArray(octave_value v) { return v.int32_array_value(); }
     static const HighFive::DataType& predType() { return predtype::NATIVE_INT32; }
 };
 template<>
 struct h5traits<int16_t> {
     typedef int16NDArray OctaveArray;
-    static OctaveArray oct_array(octave_value v) { return v.int16_array_value(); }
+    static OctaveArray toOctaveArray(octave_value v) { return v.int16_array_value(); }
     static const HighFive::DataType& predType() { return predtype::NATIVE_INT16; }
 };
 template<>
 struct h5traits<int8_t> {
     typedef int8NDArray OctaveArray;
-    static OctaveArray oct_array(octave_value v) { return v.int8_array_value(); }
+    static OctaveArray toOctaveArray(octave_value v) { return v.int8_array_value(); }
     static const HighFive::DataType& predType() { return predtype::NATIVE_INT8; }
 };
 
+// Translate an octave-like type spec, e.g. 'uint32', to H5 datatype
 HighFive::DataType h5type_from_spec(const std::string& dtype_spec);
 
 /**
@@ -126,17 +129,23 @@ HighFive::DataType h5type_from_spec(const std::string& dtype_spec);
  */
 bool locationExists(const HighFive::File& f, const std::string& loc);
 
+// structures with info on H5 objects (DataSpace,DataType,DataSet,Group)
+// oct_map() function returns this info as a (key,value) map
+// for reporting back to Octave in h5info
+
+// DataSpace
 struct dspace_info_t {
     std::string extent_type;
     uint64NDArray size;
     uint64NDArray maxsize;
-    void set(const HighFive::DataSpace& dspace);
+    void assign(const HighFive::DataSpace& dspace);
     octave_scalar_map oct_map() const;
     bool needs_chunk() const;
     bool isNull() const { return extent_type=="Empty"; } 
     bool isScalar() const { return extent_type=="Scalar"; } 
     bool isSimple() const { return extent_type=="Simple"; } 
 };
+// DataType
 struct dtype_info_t {
     std::string h5class; 
     std::string octave_class;
@@ -144,9 +153,10 @@ struct dtype_info_t {
     std::string signed_status;
     std::string cset;
     std::string pading;
-    void set(const HighFive::DataType& dtype);
+    void assign(const HighFive::DataType& dtype);
     octave_scalar_map oct_map() const;
 };
+// DataSet
 struct dset_info_t {
     std::string name;
     dtype_info_t dtype_info;
@@ -154,14 +164,15 @@ struct dset_info_t {
     uint64NDArray chunksize;
     octave_value fillValue; 
     std::map<std::string,octave_value> attributes;  
-    void set(const HighFive::DataSet& ds, const std::string& path); 
+    void assign(const HighFive::DataSet& ds, const std::string& path); 
     octave_scalar_map oct_map() const;
 };
+// Named DataType (not fully implemented)
 struct named_dtype_info_t : public dtype_info_t {
     std::string name;
-    void set(const HighFive::DataType& dtype, const std::string& path) {
+    void assign(const HighFive::DataType& dtype, const std::string& path) {
         name = path;
-        dtype_info_t::set(dtype);
+        dtype_info_t::assign(dtype);
     }
     octave_scalar_map oct_map() const {
         // octave_scalar_map m = dtype_info_t::oct_map(); // this needs fixing
@@ -170,17 +181,44 @@ struct named_dtype_info_t : public dtype_info_t {
         return m;
     }
 };
+// Group
 struct group_info_t {
     std::string name;
     std::vector<group_info_t> groups;
     std::vector<dset_info_t> datasets;
     std::vector<named_dtype_info_t> datatypes;
     std::map<std::string,octave_value> attributes;
-    void set(const HighFive::Group& g, const std::string& path); 
+    void assign(const HighFive::Group& g, const std::string& path); 
     octave_scalar_map oct_map() const;
 };
 
-
+/**
+ * @brief The data_exchage structure facilitates IO operations between H5 & Octave
+ * 
+ * To write an octave value to a dataset:
+ * 
+ * @code {.cpp}
+ * octave_value ov;
+ * DataSet dset(...);
+ * data_exchange dxmem, dxfile;
+ * if (!dxmem.assign(ov)) error ...
+ * if (!dxfile.assign(&dset)) error ...
+ * if (!dxmem.isCompatible(dxfile)) error ...
+ * dxmem.write(dxfile);
+ * @endcode
+ * 
+ * To read a value:
+ * 
+ * @code {.cpp}
+ * DataSet dset(...);
+ * data_exchange dxfile;
+ * if (!dxfile.assign(&dset)) error ...
+ * if (!dxfile.selectHyperslab(...)) error ...
+ * octave_value ov = dxfile.read();
+ * @endcode 
+ * 
+ * 
+ */
 struct data_exchange {
     octave_value ov;
     HighFive::DataSet* dset{nullptr};
@@ -192,9 +230,9 @@ struct data_exchange {
     std::string dtype_spec;
     dim_vector dv;
     std::string lastError;
-    bool set(octave_value v);
-    bool set(HighFive::DataSet* ds);
-    bool set(const HighFive::Attribute* attr);
+    bool assign(octave_value v);
+    bool assign(HighFive::DataSet* ds);
+    bool assign(const HighFive::Attribute* attr);
     bool isCompatible(const data_exchange& dx);
     bool isValid() const {
         return !(dtype_spec.empty() || dtype_spec=="unsupported");
@@ -247,7 +285,7 @@ private:
     }
 
 
-    bool set(const HighFive::DataType& t, const HighFive::DataSpace& s);
+    bool assign(const HighFive::DataType& t, const HighFive::DataSpace& s);
 
     template<class T>
     octave_value read_impl()
@@ -269,13 +307,13 @@ private:
     template<typename T>
     void write_impl(const data_exchange& dxfile) 
     {
-        auto A = h5traits<T>::oct_array(ov);
+        auto A = h5traits<T>::toOctaveArray(ov);
         h5write(*dxfile.dset,A.fortran_vec(),h5traits<T>::predType(), dspace, dxfile.dspace);
     }
     template<typename T>
     void write_attr_impl(HighFive::Attribute& att) 
     {
-        auto A = h5traits<T>::oct_array(ov);
+        auto A = h5traits<T>::toOctaveArray(ov);
         att.write_raw(A.fortran_vec(), h5traits<T>::predType());    
     }
     void write_string(const data_exchange& dxfile);
@@ -291,7 +329,7 @@ std::map<std::string, octave_value> readAttributes(const H5Obj& obj)
         hdf5oct::data_exchange dx;
         octave_value ov;
         HighFive::Attribute attr = obj.getAttribute(attr_name);
-        if (dx.set(&attr)) ov = dx.read_attribute();
+        if (dx.assign(&attr)) ov = dx.read_attribute();
         M[attr_name] = ov;  
     }
     return M;
