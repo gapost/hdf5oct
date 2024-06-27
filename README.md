@@ -125,27 +125,27 @@ To avoid array transposition operations during data exchange between OCTAVE and 
 | Row Vector |  $[1 \times N]$ | $[N \times 1]$ or $[N]$  |
 | Column Vector |  $[N \times 1]$ | $[1 \times N]$   |
 
-In this manner, the data is copied directly from memory to disk without any change of order.
+In this manner, the data is copied "as-is" from memory to disk, minimizing overhead and memory allocations.
 
-An OCTAVE user storing data to and reading back from HDF5 will not notice any difference. However, when a `hdf5oct`-generated HDF5 dataset is opened by another application, the arrays will appear transposed.
+An OCTAVE user storing data to and reading back from HDF5 will not notice any difference. However, when a `hdf5oct`-generated HDF5 dataset is opened by another application, or vice-versa, the arrays will appear transposed.
 
-# INSTALLATION #########################
+# Installation #########################
 
 To install the latest snapshot run the following in OCTAVE
 
-    pkg install "https://github.com/gapost/hdf5oct/archive/master.zip"
+    >> pkg install "https://github.com/gapost/hdf5oct/archive/master.zip"
 
-Currently, only Linux systems are supported. 
+After successful installation, test the package with
 
-# DEINSTALLATION #########################
+    >> test h5create
 
-To uninstall the package run
-
-    pkg uninstall hdf5oct
+This performs some basic tests of all functions in the package.
 
 # TODO #################################
 
 - support compression flags for h5create
+
+- h5read: implement MATLAB compatible mapping for other HDF5 datatypes: `Bitfield, Opaque, Reference, Enum, Compound, Array`
 
 - write more comprehensive tests instead of a few random choices. Also
   test for error conditions.
@@ -157,4 +157,6 @@ To uninstall the package run
 © 2008-2013, Andrew Collette \
 © 2024, George Apostolopoulos
 
-Released under the [LGPLv3+](COPYING).
+[HighFive](https://github.com/BlueBrain/HighFive) is used internally as a C++ interface to the HDF5 library.
+
+Released under the [LGPLv3+](COPYING), [Boost Software License v1.0](src/third_party/HighFive-2.9.0/LICENSE).
