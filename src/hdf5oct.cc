@@ -234,7 +234,7 @@ void hdf5oct::dset_info_t::assign(const H5::DataSet& ds, const string& path) {
     dspace_info.assign(ds.getSpace());
     // check creation properties
     H5::DataSetCreateProps dscpl = ds.getCreatePropertyList();
-    if (dspace_info.isSimple()) {
+    if (dspace_info.isSimple() && H5Pget_layout(dscpl.getId())==H5D_CHUNKED) {
         int ndim = dspace_info.size.numel();
         vector<hsize_t> hdims(ndim);
         if (H5Pget_chunk(dscpl.getId(),ndim,hdims.data())==ndim) {
