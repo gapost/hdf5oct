@@ -60,11 +60,8 @@ str =
   [1,3] = три
   [1,4] = neljä
 }
->> oneliner = "This is a single string";
 >> h5create('test.h5','D2',size(str),'datatype','string')
->> h5create('test.h5','D3',1,'datatype','string') % scalar string dataset
 >> h5write('test.h5','D2',str)
->> h5write('test.h5','D3',oneliner)
 >> h5read('test.h5','D2')
 ans =
 {
@@ -73,10 +70,13 @@ ans =
   [1,3] = три
   [1,4] = neljä
 }
+>> oneliner = "This is a single string";
+>> h5create('test.h5','D3',1,'datatype','string') % scalar string dataset
+>> h5write('test.h5','D3',oneliner)
 >> h5read('test.h5','D3')
 ans = This is a single string
 ```
-The structure of the HDF5 file can be viewed with `h5disp`. `h5info` can be also used for more detail.
+The structure of the HDF5 file can be viewed with `h5disp`. `h5info` can also be used for more detail.
 
 ```matlab
 >> h5disp('test.h5')
@@ -127,7 +127,7 @@ To avoid array transposition operations during data exchange between OCTAVE and 
 
 In this manner, the data is copied "as-is" from memory to disk, minimizing overhead and memory allocations.
 
-An OCTAVE user storing data to and reading back from HDF5 will not notice any difference. However, when a `hdf5oct`-generated HDF5 dataset is opened by another application, or vice-versa, the arrays will appear transposed.
+An OCTAVE user employing `hdf5oct` to export/import data to/from HDF5 files will not notice any difference. However, when a `hdf5oct`-generated file is opened by another application, or vice-versa, the arrays will appear transposed.
 
 # Installation #########################
 
@@ -137,15 +137,16 @@ To install the latest snapshot run the following in OCTAVE
 
 After successful installation, test the package with
 
+    >> pkg load hdf5oct
     >> test h5create
 
-This performs some basic tests of all functions in the package.
+This performs a number of basic tests on all functions in the package.
 
 # TODO #################################
 
 - support compression flags for h5create
 
-- h5read: implement MATLAB compatible mapping for other HDF5 datatypes: `Bitfield, Opaque, Reference, Enum, Compound, Array`
+- h5read: implement MATLAB compatible mapping to OCTAVE of the remaining HDF5 datatypes: `Bitfield, Opaque, Reference, Enum, Compound, Array`
 
 - write more comprehensive tests instead of a few random choices. Also
   test for error conditions.
@@ -159,4 +160,4 @@ This performs some basic tests of all functions in the package.
 
 [HighFive](https://github.com/BlueBrain/HighFive) is used internally as a C++ interface to the HDF5 library.
 
-Released under the [LGPLv3+](COPYING), [Boost Software License v1.0](src/third_party/HighFive-2.9.0/LICENSE).
+Released under the [LGPLv3+](COPYING) and [Boost Software License v1.0](src/third_party/HighFive-2.9.0/LICENSE).
