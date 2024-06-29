@@ -23,15 +23,26 @@
 
 pkg load hdf5oct
 
+if isfile('test.h5'), unlink('test.h5'); end
+
 disp("------------ test help strings: ----------------")
-help h5read
-help h5write
-help h5readatt
-help h5writeatt
-help h5create
+function test_help(funcname)
+  s = help(funcname);
+  if isempty(s),
+    disp(["FAIL: No help for function '" funcname "'."])
+  else
+    disp(["Help for function '" funcname "' OK."])
+  endif
+endfunction
+test_help('h5create');
+test_help('h5write');
+test_help('h5writeatt');
+test_help('h5read');
+test_help('h5readatt');
+test_help('h5info');
+test_help('h5disp');
 
 disp("------------ test functionality: ----------------")
-
 function ret = insert_chunk_at(mat, chunk, start)
   ret = mat;
   idx={};
@@ -75,16 +86,16 @@ chunksize = [1 3 2];
 h5create("test.h5","/created_dset1",[ Inf 3 2],'ChunkSize',chunksize)
 
 k=0;
-%h5write("test.h5","/created_dset1",reshape((1:prod(chunksize))*10**k,chunksize), [ 1+chunksize(1)*k, 1, 1], chunksize)
+%h5write("test.h5","/created_dset1",reshape((1:prod(chunksize))*10^k,chunksize), [ 1+chunksize(1)*k, 1, 1], chunksize)
 k = k+1;
 start = [ 1+chunksize(1)*k, 1, 1];
-datachunk = reshape((1:prod(chunksize))*10**k,chunksize);
+datachunk = reshape((1:prod(chunksize))*10^k,chunksize);
 %h5write("test.h5","/created_dset1",datachunk,start, size(datachunk))
 read_write_chunk_at("test.h5","/created_dset1",datachunk,start)
 
 k = k+1;
 start = [ 1+chunksize(1)*k, 1, 1];
-datachunk = reshape((1:prod(chunksize))*10**k,chunksize);
+datachunk = reshape((1:prod(chunksize))*10^k,chunksize);
 read_write_chunk_at("test.h5","/created_dset1",datachunk,start)
 
 %%%%%%%%
@@ -99,12 +110,12 @@ k=0;
 k = k+1;
 k = k+1;
 start = [ 1,1,1+chunksize(1)*k];
-datachunk = cast(reshape((1:prod(chunksize))*10**k,chunksize),'uint32');
+datachunk = cast(reshape((1:prod(chunksize))*10^k,chunksize),'uint64');
 read_write_chunk_at("test.h5","created_dset_inf2",datachunk,start)
 
 k = k+1;
 start = [ 1,1,1+chunksize(1)*k];
-datachunk = cast(reshape((1:prod(chunksize))*10**k,chunksize),'uint32');
+datachunk = cast(reshape((1:prod(chunksize))*10^k,chunksize),'uint64');
 read_write_chunk_at("test.h5","created_dset_inf2",datachunk,start)
 
 %%%%%%%%
@@ -119,16 +130,19 @@ disp("Test h5write and h5read...")
 function check_dset(location, data)
 	 atttype = evalin("caller",["typeinfo(",data,")"]);
 	 attclass = evalin("caller",["class(",data,")"]);
+   sz = size(evalin("caller",data));
 	 printf(["write ",num2str(ndims(evalin("caller",data))),"d ",attclass," ",atttype," dataset ",location,"..."])
-	 h5write("test.h5", location,evalin("caller", data));
+	 h5create("test.h5",location,sz,'datatype',attclass);
+   h5write ("test.h5",location,evalin("caller", data));
 	 printf("and read it..")
 	 readdata = h5read("test.h5", location);
+   assert(evalin("caller",data),readdata)
 
 	 %disp("ref:")
 	 %disp(evalin("caller", data));
 	 %disp("data read from file:")
 	 %disp(readdata)
-	 
+
 	 if(all(readdata == evalin("caller", data)))
 	   disp("ok")
 	 elseif(isna(evalin("caller", data)) && isna(readdata))
@@ -144,11 +158,15 @@ function check_dset(location, data)
 	 end
 end
 
-h5write("test.h5","/rangetest",1:10)
-h5write("test.h5","/rangetest2",transpose(1:0.2:2))
+range = 1:10;
+h5create("test.h5","/rangetest",size(range))
+h5write("test.h5","/rangetest",range)
+range = transpose(1:0.2:2);
+h5create("test.h5","/rangetest2",size(range))
+h5write("test.h5","/rangetest2",range)
 
 s=3
-range = cast(1:s**1,'int32');
+range = cast(1:s,'int32');
 check_dset('/foo1_range', "range")
 matrix = reshape(cast(range,'int16'), length(range),1);
 check_dset('/foo1_int', "matrix")
@@ -161,28 +179,28 @@ check_dset('/foo4_int', "matrix")
 matrix =reshape(cast(1:s*(s+1)*(s+2)*(s+3),'int64'), [s s+1 s+2 s+3]);
 check_dset('/foo5_int', "matrix")
 
-range =(1:s**1)*0.1;
+range =(1:s)*0.1;
 check_dset('/foo1_anotherrange', "range")
 matrix = reshape(range, length(range),1);
 check_dset('/foo1_double', "matrix")
-matrix =reshape((1:s**2)*0.1, [s s]);
+matrix =reshape((1:s^2)*0.1, [s s]);
 check_dset('/foo2_double', "matrix")
-matrix =reshape((1:s**3)*0.1, [s s s]);
+matrix =reshape((1:s^3)*0.1, [s s s]);
 check_dset('/foo3_double', "matrix")
-matrix =reshape((1:s**4)*0.1, [s s s s]);
+matrix =reshape((1:s^4)*0.1, [s s s s]);
 check_dset('/foo4_double', "matrix")
 
 disp("Test h5write and h5read to subgroups...")
-matrix = reshape(cast(1:s**2,'int32'), [s s]);
+matrix = reshape(cast(1:s^2,'int32'), [s s]);
 check_dset('/foo/foo2_int', "matrix")
 check_dset('/bar1/bar2/foo2_int', "matrix")
 
 disp("Test h5write and h5read for complex data...")
-matrix = reshape((1:s**3)*0.1, [s s s]);
+matrix = reshape((1:s^3)*0.1, [s s s]);
 matrix = matrix + i*matrix*0.01;
 check_dset('/foo_complex', "matrix")
 
-range = (1:s**3)*0.1;
+range = (1:s^3)*0.1;
 range = range + i*range*0.01;
 check_dset('/foo_complex_range', "range")
 
@@ -205,7 +223,7 @@ function check_att(location, att)
 	   disp(readval)
 	 end
 end
-  
+
 testatt_double = 12.34567;
 check_att("/","testatt_double")
 % check writing to an existing attribute of the same type
@@ -230,37 +248,46 @@ check_att("/","testatt_string")
 testatt_string = 'buona sera!';
 check_att("/","testatt_string")
 
-disp("write to nonexisting file...")
-h5write("test2.h5","/foo/bar/test",reshape(1:27,[3 3 3]));
+
 
 
 disp("------------ test failures and wrong arguments: ----------------")
+disp("read from a nonexisting file")
 try
-  % read from a nonexisting file
   data = h5read("nonexistingfile.h5","/foo")
 catch
   disp(["error catched: ", lasterror.message])
 end
 
+disp("write to nonexisting file...")
+try
+  h5write("test2.h5","/foo/bar/test",reshape(1:27,[3 3 3]));
+catch
+  disp(["error catched: ", lasterror.message])
+end
+
+disp("h5readatt with too many arguments")
 try
   data = h5readatt("test.h5","/foo","too","many","arguments")
 catch
   disp(["error catched: ", lasterror.message])
 end
 
+disp("h5writeatt to nonexisting location")
 try
-  data = h5writeatt("test.h5","/nonexisting","testkey","testval")
+  h5writeatt("test.h5","/nonexisting","testkey","testval")
 catch
   disp(["error catched: ", lasterror.message])
 end
 
+disp("write a struct")
 try
   %create a struct.
   x.a=1;
   x.b="foo";
-  h5write("nonexistingfile.h5","/foo",x)
+  h5create('test.h5','/foo',size(x),'datatype',class(x));
+  h5write("test.h5","/foo",x)
 catch
   disp(["error catched: ", lasterror.message])
 end
 
-h5create("test.h5","/created_autchunk",[ Inf Inf 4], 'ChunkSize', 'auto')
