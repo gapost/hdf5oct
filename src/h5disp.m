@@ -96,8 +96,8 @@ elseif isfield(info,"Dataspace"), # info is a dataset
     disp([indent "Dataset '" info.Name "'"]);
     __dispAttr__(info.Attributes, depth+1);
     disp([indent "  Extent: " num2str(info.Dataspace.ExtentType)]);
-    disp([indent "  Size: " disp_size(info.Dataspace.Size)]);
-    disp([indent "  MaxSize: " disp_size(double(info.Dataspace.MaxSize))]);
+    if !isempty(info.Dataspace.Size), disp([indent "  Size: " disp_size(info.Dataspace.Size)]); end
+    if !isempty(info.Dataspace.MaxSize), disp([indent "  MaxSize: " disp_size(double(info.Dataspace.MaxSize))]); end
     __disph5__(info.Datatype,depth+1);
     if !isempty(info.ChunkSize)
         disp([indent "  ChunkSize: [" num2str(info.ChunkSize) "]"]);

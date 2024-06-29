@@ -49,20 +49,18 @@ ans =
    5   9
    6  10
 ```
-Strings are always UTF8 encoded and formatted as cell arrays:
+Strings are always UTF8 encoded. A single string is written to a scalar dataset. Multiple strings must be passed as a cell array:
 
 ```matlab
->> str = {"one", "δύο", "три", "neljä"}
-str =
-{
-  [1,1] = one
-  [1,2] = δύο
-  [1,3] = три
-  [1,4] = neljä
-}
->> h5create('test.h5','D2',size(str),'datatype','string')
->> h5write('test.h5','D2',str)
+>> oneliner = "This is a single string";
+>> h5create('test.h5','D2',1,'datatype','string') % scalar string dataset
+>> h5write('test.h5','D2',oneliner)
 >> h5read('test.h5','D2')
+ans = This is a single string
+>> str = {"one", "δύο", "три", "neljä"};
+>> h5create('test.h5','D3',size(str),'datatype','string')
+>> h5write('test.h5','D3',str)
+>> h5read('test.h5','D3')
 ans =
 {
   [1,1] = one
@@ -70,11 +68,6 @@ ans =
   [1,3] = три
   [1,4] = neljä
 }
->> oneliner = "This is a single string";
->> h5create('test.h5','D3',1,'datatype','string') % scalar string dataset
->> h5write('test.h5','D3',oneliner)
->> h5read('test.h5','D3')
-ans = This is a single string
 ```
 The structure of the HDF5 file can be viewed with `h5disp`. `h5info` can also be used for more detail.
 
@@ -83,34 +76,32 @@ The structure of the HDF5 file can be viewed with `h5disp`. `h5info` can also be
 HDF5 test.h5
 Group '/'
   Dataset '/D1'
+    Extent: Simple
+    Size: 2x5
+    MaxSize: 2x5
     Datatype
       Class: 'int'
       OctaveClass: 'uint32'
       Size: 4
       Sign: unsigned
-    Extent: [Simple]
-    Size: [2  5]
-    MaxSize: [2  5]
   Dataset '/D2'
+    Extent: Scalar
     Datatype
       Class: 'string'
       OctaveClass: 'string'
       Size: H5T_VARIABLE
       charSet: utf8
       Pading: nullterm
-    Extent: [Simple]
-    Size: [1  4]
-    MaxSize: [1  4]
   Dataset '/D3'
+    Extent: Simple
+    Size: 1x4
+    MaxSize: 1x4
     Datatype
       Class: 'string'
       OctaveClass: 'string'
       Size: H5T_VARIABLE
       charSet: utf8
       Pading: nullterm
-    Extent: [Scalar]
-    Size: []
-    MaxSize: []
 ```
 # Array storage layout convention
 
