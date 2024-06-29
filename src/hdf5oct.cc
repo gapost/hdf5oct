@@ -232,16 +232,16 @@ void hdf5oct::dset_info_t::assign(const H5::DataSet& ds, const string& path) {
     H5::DataType dt = ds.getDataType();
     dtype_info.assign(dt); 
     dspace_info.assign(ds.getSpace());
-    if (dspace_info.needs_chunk()) {        
-        H5::DataSetCreateProps dscpl = ds.getCreatePropertyList();
-        H5::Chunking chunking(dscpl);
+    // check creation properties
+    H5::DataSetCreateProps dscpl = ds.getCreatePropertyList();
+    if (dspace_info.isSimple()) {
         int ndim = dspace_info.size.numel();
-        vector<hsize_t> hdims = chunking.getDimensions();
-        if (ndim == hdims.size()) {
+        vector<hsize_t> hdims(ndim);
+        if (H5Pget_chunk(dscpl.getId(),ndim,hdims.data())==ndim) {
             chunksize = uint64NDArray(dim_vector(1,ndim));        
-            for(octave_idx_type i=0; i<ndim; i++) chunksize(i) = hdims[ndim-1-i];
+            for(int i=0; i<ndim; i++) chunksize(i) = hdims[ndim-1-i];
         }
-    } 
+    }
     attributes = readAttributes(ds);  
 }
 octave_scalar_map hdf5oct::dset_info_t::oct_map() const {

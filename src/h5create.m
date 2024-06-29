@@ -26,11 +26,10 @@
 # in the HDF5 file specified by @var{filename}.  Intermediate groups
 # are created as necessary.
 #
-# The vector @var{size} may contain one or several Inf (or
-# equivalently: zero) values.
+# The vector @var{size} may contain one or several Inf values.
 # This will lead to unlimited maximum extent of the dataset in the
 # respective dimensions and 0 initial extent.
-# Note that any dataset with at least one unlimited dimension must be chunked and
+# Note that datasets with at least one unlimited dimension must be chunked and
 # it is generally recommended for large datasets.
 #
 # The list of @var{key}, @var{val} arguments allows to specify
@@ -44,10 +43,7 @@
 # @samp{int8} | 'string'
 # @item @option{ChunkSize}
 # The value may be either a vector specifying the chunk size,
-# or an empty vector [], which means no chunking (this is the default),
-# or the string @samp{auto} which makes the library choose automatically
-# an appropriate chunk size, as best as it can. Note that the @samp{auto}
-# setting is not @sc{matlab} compatible.
+# or an empty vector [], which means no chunking (this is the default).
 # @end table
 #
 # @seealso{h5write}

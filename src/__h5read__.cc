@@ -65,11 +65,11 @@ Users should not use this directly. Use h5read.m instead")
         // check that location exists and that it is a dataset
         if (h5o::locationExists(file,location)) {
             if (file.getObjectType(location)!=H5::ObjectType::Dataset) {
-                error("h5write: location '%s' is not a Dataset",location.c_str());
+                error("h5read: location '%s' is not a Dataset",location.c_str());
                 return octave_value();
             }
         } else {
-            error("h5write: location %s does not exist",location.c_str());
+            error("h5read: location %s does not exist",location.c_str());
             return octave_value();
         }
 
