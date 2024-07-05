@@ -696,14 +696,31 @@ bool hdf5oct::locationExists(const H5::File& f, const std::string& loc)
     // check for intermediate groups
     string::size_type pos = loc.find_first_of('/'), last_pos = 0;
     while (pos != string::npos) {
-        if (pos!=0) { // skip checking is root exists
+        if (pos!=0) { // skip checking if root exists
             string iloc = loc.substr(0,pos);
-            if (!f.exist(loc.substr(0,pos))) return false;
+            if (!f.exist(iloc)) return false;
         }
         last_pos = pos+1;
         pos = loc.find_first_of('/',last_pos);
     }
     if (last_pos < loc.size()) return f.exist(loc);
+    return true;
+}
+
+bool hdf5oct::canCreate(const H5::File& f, const std::string& loc)
+{
+    // check for intermediate groups
+    string::size_type pos = loc.find_first_of('/'), last_pos = 0;
+    while (pos != string::npos) {
+        if (pos!=0) { // skip checking is root exists
+            string iloc = loc.substr(0,pos);
+            if (!f.exist(iloc)) return true; // ok, will be created
+            if (f.getObjectType(iloc) != H5::ObjectType::Group)
+                return false; // error, intermediate node is not a group
+        }
+        last_pos = pos+1;
+        pos = loc.find_first_of('/',last_pos);
+    }
     return true;
 }
 

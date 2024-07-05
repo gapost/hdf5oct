@@ -129,6 +129,20 @@ HighFive::DataType h5type_from_spec(const std::string& dtype_spec);
  */
 bool locationExists(const HighFive::File& f, const std::string& loc);
 
+/**
+ * @brief Check if a location can be created in a HDF5 file.
+ * 
+ * If the location path contains intermediate objects, the function
+ * checks that either they are of type Group or that they do not exist
+ * and thus will be also created.
+ * 
+ * @param f The HDF5 file object
+ * @param loc The location path
+ * @return true If the specified location can be created
+ * @return false Otherwise
+ */
+bool canCreate(const HighFive::File& f, const std::string& loc);
+
 // structures with info on H5 objects (DataSpace,DataType,DataSet,Group)
 // oct_map() function returns this info as a (key,value) map
 // for reporting back to Octave in h5info

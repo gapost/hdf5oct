@@ -72,7 +72,14 @@ Users should not use this directly. Use h5create.m instead")
          if (h5o::locationExists(file,location)) {
                error("h5create: location '%s' already exists",location.c_str());
                return octave_value();
-            }        
+            }  
+
+
+         if (!h5o::canCreate(file,location))    {
+            error("h5create: location '%s' cannot be created. "
+                  "Check that intermediate nodes are of type Group",
+                  location.c_str());
+         }   
 
          H5::DataSpace fspace = H5::DataSpace::Scalar();
          size_t ndim = size.numel(); 
