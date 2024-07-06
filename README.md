@@ -32,35 +32,35 @@ data =
    2   4   6   8  10
 
 % create a HDF5 file with a dataset named 'D1' of matching size and datatype
->> h5create('test.h5','D1',size(data),'datatype','uint32')
+>> h5create('test.h5','/D1',size(data),'datatype','uint32')
 % store the data to the dataset
->> h5write('test.h5','D1',data)
+>> h5write('test.h5','/D1',data)
 % read back the values
->> h5read('test.h5','D1')
+>> h5read('test.h5','/D1')
 ans =
 
    1   3   5   7   9
    2   4   6   8  10
 
 % read the 3rd & 6th columns as a [2x2] matrix 
->> h5read('test.h5','D1',[1 3],[2 2],[1 2])
+>> h5read('test.h5','/D1',[1 3],[2 2],[1 2])
 ans =
 
    5   9
    6  10
 ```
-Strings are always UTF8 encoded. A single string is written to a scalar dataset. Multiple strings must be passed as a cell array:
+Strings are always UTF8 encoded. A single string is written to a scalar dataset (size=1). Multiple strings must be passed as a cell array:
 
 ```matlab
 >> oneliner = "This is a single string";
->> h5create('test.h5','D2',1,'datatype','string') % scalar string dataset
->> h5write('test.h5','D2',oneliner)
->> h5read('test.h5','D2')
+>> h5create('test.h5','/D2',1,'datatype','string') % scalar string dataset
+>> h5write('test.h5','/D2',oneliner)
+>> h5read('test.h5','/D2')
 ans = This is a single string
 >> str = {"one", "δύο", "три", "neljä"};
->> h5create('test.h5','D3',size(str),'datatype','string')
->> h5write('test.h5','D3',str)
->> h5read('test.h5','D3')
+>> h5create('test.h5','/D3',size(str),'datatype','string')
+>> h5write('test.h5','/D3',str)
+>> h5read('test.h5','/D3')
 ans =
 {
   [1,1] = one
@@ -105,11 +105,11 @@ Group '/'
 ```
 # Array storage layout convention
 
-In HDF5, arrays are stored in C-style, [row-major order](https://en.wikipedia.org/wiki/Row-_and_column-major_order). On the other hand, OCTAVE employs fortran-style column-major storage order.
+In HDF5, arrays are stored in C-style, [row-major order](https://en.wikipedia.org/wiki/Row-_and_column-major_order). On the other hand, OCTAVE and MATLAB employ fortran-style, column-major storage order.
 
-To avoid array transposition operations during data exchange between OCTAVE and HDF5, this package employs the following convention:
+To avoid array transposition operations during data serialization, MATLAB employs the following convention, which is also followed by `hdf5oct`:
 
-|  Storage Type | Octave array size | HDF5 DataSpace dimensions |
+|  Storage Type | MATLAB/OCTAVE array size | HDF5 DataSpace dimensions |
 | :---------------: | :---------------: | :-----------------------: |
 | Matrix |   $[N \times M]$         |      $[M \times N]$              |
 | Multidimensional Array |   $[N_1 \times N_2 \times ... \times N_m]$  | $[N_m \times N_{m-1} \times ... \times N_1]$ |
@@ -118,18 +118,22 @@ To avoid array transposition operations during data exchange between OCTAVE and 
 
 In this manner, the data is copied "as-is" from memory to disk, minimizing overhead and memory allocations.
 
-An OCTAVE user employing `hdf5oct` to export/import data to/from HDF5 files will not notice any difference. However, when a `hdf5oct`-generated file is opened by another application, or vice-versa, the arrays will appear transposed.
+A MATLAB user or an OCTAVE user employing `hdf5oct` to export/import data to/from HDF5 files will not notice any difference. However, when a MATLAB- or `hdf5oct`-generated file is opened by another application, or vice-versa, the arrays will appear transposed. 
 
 # Installation #########################
 
 To install the latest snapshot run the following in OCTAVE
 
-    >> pkg install "https://github.com/gapost/hdf5oct/archive/master.zip"
+```matlab
+    pkg install "https://github.com/gapost/hdf5oct/archive/master.zip"
+```
 
 After successful installation, test the package with
 
-    >> pkg load hdf5oct
-    >> test h5create
+```matlab
+    pkg load hdf5oct
+    test h5create
+```
 
 This performs a number of basic tests on all functions in the package.
 
