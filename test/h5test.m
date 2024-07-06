@@ -119,10 +119,19 @@ datachunk = cast(reshape((1:prod(chunksize))*10^k,chunksize),'uint64');
 read_write_chunk_at("test.h5","created_dset_inf2",datachunk,start)
 
 %%%%%%%%
+print("Test h5create chunked int8 dataset ...")
 h5create("test.h5","created_dset_inf23",[ 2 3 4],'Datatype','int8', 'ChunkSize', [2 3 2])
+disp('ok')
 
 %%%%%%%%
+print("Test h5create dataset and intermediate groups ...")
 h5create("test.h5","/nonexistent/groups/created_dset_single",[1],'Datatype','single')
+disp('ok')
+
+%%%%%%%%
+print("Test that h5create fails to create dataset below another dataset ...")
+fail("h5create('test.h5','/created_dset1/D2',1)")
+disp('ok')
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 disp("Test h5write and h5read...")
