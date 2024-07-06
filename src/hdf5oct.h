@@ -35,6 +35,8 @@
 
 namespace hdf5oct {
 
+static std::string lastError;
+
 // Predefined HDF5 types 
 struct predtype {
     static HighFive::AtomicType<double> NATIVE_DOUBLE;
@@ -143,6 +145,8 @@ bool locationExists(const HighFive::File& f, const std::string& loc);
  */
 bool canCreate(const HighFive::File& f, const std::string& loc);
 
+bool validLocation(const std::string& loc);
+
 // structures with info on H5 objects (DataSpace,DataType,DataSet,Group)
 // oct_map() function returns this info as a (key,value) map
 // for reporting back to Octave in h5info
@@ -243,7 +247,7 @@ struct data_exchange {
     dspace_info_t dspace_info;
     std::string dtype_spec;
     dim_vector dv;
-    std::string lastError;
+    
     bool assign(octave_value v);
     bool assign(HighFive::DataSet* ds);
     bool assign(const HighFive::Attribute* attr);

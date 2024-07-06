@@ -724,6 +724,16 @@ bool hdf5oct::canCreate(const H5::File& f, const std::string& loc)
     return true;
 }
 
+bool hdf5oct::validLocation(const std::string& loc)
+{
+    if (loc.find_first_of('/')!=0) {
+        lastError = "dataset location should be specified "
+                    "as a full pathname with leading '/'";
+        return false;
+    }
+    return true;
+}
+
 
 
 
