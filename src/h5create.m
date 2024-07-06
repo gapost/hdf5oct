@@ -167,7 +167,7 @@ __h5create__(filename,create_file,location,sz,datatype,chunksize,fillvalue);
 %!endfunction
 
 %!test
-%! loc = 'T2/G1/G2/D1';
+%! loc = '/T2/G1/G2/D1';
 %! x = reshape(1:80,10,8);
 %! size = [Inf 15];
 %! chunk = [5 15];
