@@ -69,17 +69,13 @@ Users should not use this directly. Use h5create.m instead")
         //open the hdf5 file, create it if it does not exist
         H5::File file(filename, create_file ? H5::File::Create : H5::File::ReadWrite);
 
-         if (h5o::locationExists(file,location)) {
-               error("h5create: location '%s' already exists",location.c_str());
-               return octave_value();
-            }  
+         if (h5o::locationExists(file,location)) 
+               error("h5create: location '%s' already exists",location.c_str()); 
 
-
-         if (!h5o::canCreate(file,location))    {
+         if (!h5o::canCreate(file,location))    
             error("h5create: location '%s' cannot be created. "
                   "Check that intermediate nodes are of type Group",
                   location.c_str());
-         }   
 
          H5::DataSpace fspace = H5::DataSpace::Scalar();
          size_t ndim = size.numel(); 

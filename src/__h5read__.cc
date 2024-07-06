@@ -78,13 +78,13 @@ Users should not use this directly. Use h5read.m instead")
         H5::DataSet dset = file.getDataSet(location);
         if (!dxfile.assign(&dset)) {
             error("h5write: dataset %s: %s", location.c_str(), 
-                                              dxfile.lastError.c_str());
+                                              h5o::lastError.c_str());
             return octave_value();
         }
 
         // if requested, select hyperslab
         if (!start.isempty() && !dxfile.selectHyperslab(start,count,stride,false)) {
-            error("h5write: hyperslab selection: %s",dxfile.lastError.c_str());
+            error("h5write: hyperslab selection: %s",h5o::lastError.c_str());
             return octave_value();
         }
 

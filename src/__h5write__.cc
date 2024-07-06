@@ -79,14 +79,14 @@ Users should not use this directly. Use h5write.m instead")
         H5::DataSet dset = file.getDataSet(location);
         if (!dxfile.assign(&dset)) {
             error("h5write: dataset %s: %s", location.c_str(), 
-                                              dxfile.lastError.c_str());
+                                              h5o::lastError.c_str());
             return octave_value();
         }
 
         // Create octave data dx struct
         h5o::data_exchange dxmem;
         if (!dxmem.assign(data)) {
-            error("h5write: octave data: %s",dxmem.lastError.c_str());
+            error("h5write: octave data: %s",h5o::lastError.c_str());
             return octave_value();
         }
 
@@ -96,12 +96,12 @@ Users should not use this directly. Use h5write.m instead")
         }
 
         if (!start.isempty() && !dxfile.selectHyperslab(start,count,stride,true)) {
-            error("h5write: hyperslab selection: %s",dxfile.lastError.c_str());
+            error("h5write: hyperslab selection: %s",h5o::lastError.c_str());
             return octave_value();
         }    
 
         if (!dxmem.isCompatible(dxfile)) {
-            error("h5write: incompatible dataset and octave data: %s", dxmem.lastError.c_str());
+            error("h5write: incompatible dataset and octave data: %s", h5o::lastError.c_str());
             return octave_value();
         }
 

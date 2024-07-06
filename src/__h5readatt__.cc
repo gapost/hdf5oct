@@ -59,7 +59,7 @@ octave_value read_attr(const H5Obj& obj, const string& attrname)
     H5::Attribute attr = obj.getAttribute(attrname);
     if (!dx.assign(&attr)) {
         error("h5readatt: attribute %s: %s", attrname.c_str(), 
-                                            dx.lastError.c_str());
+                                            h5o::lastError.c_str());
         return octave_value();
     }
     return dx.read_attribute();

@@ -63,7 +63,7 @@ Users should not use this directly. Use h5write.m instead")
 
         h5o::data_exchange dxmem;
         if (!dxmem.assign(data)) {
-            error("h5writeatt: data value val: %s",dxmem.lastError.c_str());
+            error("h5writeatt: data value val: %s",h5o::lastError.c_str());
             return octave_value();
         }
 
@@ -74,7 +74,7 @@ Users should not use this directly. Use h5write.m instead")
                         H5::Group g = file.getGroup(location);
                         if (!dxmem.write_as_attribute(g,attrname))
                         {
-                            error("h5writeatt: could not write attr: %s",dxmem.lastError.c_str());
+                            error("h5writeatt: could not write attr: %s",h5o::lastError.c_str());
                             return octave_value();
                         }
                     }
@@ -84,7 +84,7 @@ Users should not use this directly. Use h5write.m instead")
                         H5::DataSet dset = file.getDataSet(location);
                         if (!dxmem.write_as_attribute(dset,attrname))
                         {
-                            error("h5writeatt: could not write attr: %s",dxmem.lastError.c_str());
+                            error("h5writeatt: could not write attr: %s",h5o::lastError.c_str());
                             return octave_value();
                         }
                     }
