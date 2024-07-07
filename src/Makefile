@@ -13,10 +13,23 @@ INCLUDES = $(shell ${OCTAVE} -f --eval "printf ('%s', __octave_config_info__().b
 
 LIBS = $(shell ${OCTAVE} -f --eval "printf ('%s %s', __octave_config_info__().build_environment.HDF5_LDFLAGS, __octave_config_info__().build_environment.HDF5_LIBS)")
 
+TEST1 = $(findstring HAVE_HDF5,$(H5FLAGS))
+TEST2 = $(findstring HAVE_HDF5_18,$(H5FLAGS))
+
 .PHONY: clean 
 
-all: hdf5oct.cc hdf5oct.h
+all: hdf5oct.cc hdf5oct.h test_hdf5
 	$(MKOCTFILE) -v $(H5FLAGS) $(INCLUDES) $(LIBS) hdf5oct.cc 
+
+test_hdf5:
+	@if [ "$(TEST1)" != "HAVE_HDF5" ]; then \
+		echo "hdf5oct cannot be installed because octave has not been built with HDF5 support"; \
+		false; \
+	fi
+	@if [ "$(TEST2)" != "HAVE_HDF5_18" ]; then \
+		echo "hdf5oct cannot be installed because octave has been built with HDF5 < 1.8.0"; \
+		false; \
+	fi
 
 clean:
 	rm -f hdf5oct.oct 
