@@ -1,3 +1,25 @@
+##
+##    Copyright (C) 2012 Tom Mullins
+##    Copyright (C) 2015 Tom Mullins, Thorsten Liebig, Anton Starikov, Stefan Großhauser
+##    Copyright (C) 2008-2013 Andrew Collette
+##    Copyright (C) 2024 George Apostolopoulos
+##
+##    This file is part of hdf5oct.
+##
+##    hdf5oct is free software: you can redistribute it and/or modify
+##    it under the terms of the GNU Lesser General Public License as published by
+##    the Free Software Foundation, either version 3 of the License, or
+##    (at your option) any later version.
+##
+##    hdf5oct is distributed in the hope that it will be useful,
+##    but WITHOUT ANY WARRANTY; without even the implied warranty of
+##    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##    GNU Lesser General Public License for more details.
+##
+##    You should have received a copy of the GNU Lesser General Public License
+##    along with hdf5oct.  If not, see <http://www.gnu.org/licenses/>.
+##
+
 # -*- texinfo -*-
 # @deftypefn {Function File} { } h5writeatt (@var{filename}, @var{location}, @var{attr}, @var{val})
 #

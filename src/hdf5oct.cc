@@ -3,6 +3,7 @@
  *    Copyright (C) 2012 Tom Mullins
  *    Copyright (C) 2015 Tom Mullins, Thorsten Liebig, Anton Starikov, Stefan Großhauser
  *    Copyright (C) 2008-2013 Andrew Collette
+ *    Copyright (C) 2024 George Apostolopoulos
  *
  *    This file is part of hdf5oct.
  *
@@ -21,26 +22,6 @@
  *
  *
  */
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-// integrated into the GNU Octave build
-#include "oct.h"
-#include "lo-ieee.h"
-#else
-// as a package
-#include <octave/oct.h>
-#include <octave/lo-ieee.h>
-#include <octave/file-stat.h>
-#include <octave/ls-hdf5.h>
-#include <octave/oct-stream.h>
-#endif
-
-#include <cstdlib>
-#include <cerrno>
-#include <iostream>
-#include <algorithm>
-#include <string>
 
 #include "hdf5oct.h"
 
@@ -1258,3 +1239,4 @@ bool hdf5oct::validLocation(const std::string &loc)
     }
     return true;
 }
+

@@ -1,7 +1,9 @@
 /*
  *
  *    Copyright (C) 2012 Tom Mullins
- *    Copyright (C) 2015 Tom Mullins, Thorsten Liebig, Stefan Großhauser
+ *    Copyright (C) 2015 Tom Mullins, Thorsten Liebig, Anton Starikov, Stefan Großhauser
+ *    Copyright (C) 2008-2013 Andrew Collette
+ *    Copyright (C) 2024 George Apostolopoulos
  *
  *    This file is part of hdf5oct.
  *
@@ -21,16 +23,12 @@
  *
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-// integrated into the GNU Octave build
-#include "oct.h"
-#else
-// as a package
-#include <octave/oct.h>
-#endif
+#ifndef _hdf5oct_h_
+#define _hdf5oct_h_
 
-#if defined (HAVE_HDF5) && defined (HAVE_HDF5_18)
+#include <octave/oct.h>
+
+// #if defined (HAVE_HDF5) && defined (HAVE_HDF5_18)
 #include <highfive/highfive.hpp>
 
 namespace hdf5oct {
