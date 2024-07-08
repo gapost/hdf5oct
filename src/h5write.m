@@ -25,25 +25,26 @@
 # @deftypefnx {Function File} { } h5write (@var{filename}, @var{dsetname}, @var{data}, @var{start}, @var{count})
 # @deftypefnx {Function File} { } h5write (@var{filename}, @var{dsetname}, @var{data}, @var{start}, @var{count}, @var{stride})
 #
+# Write data to a dataset in HDF5 file.
+#
 # @code{h5write(filename,dsetname,data)} writes data to an entire dataset, dsetname,
 # in the specified HDF5 file. If the dataset is fixed in size,
 # the amount of data to be written must match the size of the dataset.
 #
-# h5write(filename,ds,data,start,count) writes a subset of data to a dataset,
+# @code{h5write(filename,ds,data,start,count)} writes a subset of data to a dataset,
 # beginning at starting location start, and continuing for count elements.
 # In a multidimensional dataset, count specifies a distance in each direction.
-# h5write extends an extendable dataset along any unlimited dimensions,
+# @code{h5write} extends an extendable dataset along any unlimited dimensions,
 # if necessary.
 #
-# h5write(filename,ds,data,start,count,stride) specifies the spacing between
-# elements, stride, along each dimension of the dataset.
+# @code{h5write(filename,ds,data,start,count,stride)} specifies the spacing between
+# elements, @var{stride}, along each dimension of the dataset.
 #
 # @table @asis
 # @item @var{filename}
 # Filename of an existing HDF5 file, specified as a string
 # @item @var{dsetname}
-# Dataset name, specified as a string scalar or character vector containing
-# the name of an existing dataset in the HDF5 file.
+# The full path to an existing dataset, specified as a string.
 # @item @var{data}
 # Data to be written to the HDF5 file.
 # If a numeric datatype was specified in the corresponding call to h5create,
@@ -54,7 +55,8 @@
 # can be any size along that dimension.
 #
 # If "string" was specified as the datatype in the corresponding call to h5create,
-# data is a cell string array. The array dimensions must match those specified
+# data is either a single string or a cell string array. 
+# The array dimensions must match those specified
 # in the call to h5create.
 #
 # @item @var{start}

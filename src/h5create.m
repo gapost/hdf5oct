@@ -21,17 +21,45 @@
 ##
 
 # -*- texinfo -*-
-# @deftypefn {Function File} { } h5create (@var{filename}, @var{dsetname}, @var{size}, @var{key}, @var{val},...)
+# @deftypefn {Function File} { } h5create (@var{filename}, @var{dsetname}, @var{size})
+# @deftypefnx {Function File} { } h5create (@var{filename}, @var{dsetname}, @var{size}, @var{key}, @var{val},...)
 #
-# Create a dataset with name @var{dsetname} and size @var{size}
-# in the HDF5 file specified by @var{filename}.  Intermediate groups
+# Create a dataset in a HDF5 file.
+#
+# @code{h5create (@var{filename}, @var{dsetname}, @var{size})} 
+# creates a dataset with name @var{dsetname} and size @var{size}
+# in the HDF5 file specified by @var{filename}. 
+#
+# @code{h5create (@var{filename}, @var{dsetname}, @var{size}, @var{key}, @var{val},...)} 
+# specifies one or more key-value arguments.
+#
+# Input arguments:
+#
+# @table @asis
+# @item @var{filename}
+# The path of the HDF5 file as a string. If the file does not exist it
+# will be created.
+# @item @var{dsetname}
+# A string specifying the complete path to the dataset starting
+# from the root group "/". Intermediate groups
 # are created as necessary.
-#
-# The vector @var{size} may contain one or several Inf values.
+# @item @var{size}
+# A vector specifying the dimensions of the dataset.
+# @var{size} may contain one or several Inf values.
 # This will lead to unlimited maximum extent of the dataset in the
 # respective dimensions and 0 initial extent.
-# Note that datasets with at least one unlimited dimension must be chunked and
-# it is generally recommended for large datasets.
+# Datasets with at least one unlimited dimension must be chunked.
+# Chunking is generally recommended for large datasets.
+#
+# @code{size==1} or @code{size==[1 1]} results in a scalar (0-dimensional)
+# dataset.
+#
+# Note that due to the difference in array storage layout between 
+# OCTAVE (column-major)
+# and HDF5 (row-major), arrays are saved transposed in the HDF5 file.
+# Thus, if a @code{hdf5oct}-generated file is opened by another application
+# the arrays will appear transposed. 
+# @end table
 #
 # The list of @var{key}, @var{val} arguments allows to specify
 # certain properties of the dataset. Allowed settings are:
