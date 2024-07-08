@@ -6,6 +6,6 @@ Maintainer: George Apostolopoulos <gapost@ipta.demokritos.gr>
 Title: a HDF5 wrapper for GNU Octave
 Description: MATLAB compatible high-level functions for HDF5 files
 Categories: io
-Depends: octave (>= 4.0.0)
+Depends: octave (>= 6.4.0)
 License: LGPLv3+
 Url: https://github.com/gapost/hdf5oct
