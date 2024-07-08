@@ -105,7 +105,7 @@ for i=1:length(sz),
   if !(isindex(sz(i)) || sz(i)==inf)
     error("h5create: 3rd argument elements must be valid index values or inf");
   endif
-end
+endfor
 
 ## check options
 [reg, datatype, chunksize, fillvalue] = parseparams (varargin, ...
@@ -134,19 +134,19 @@ endif
 if !isempty(chunksize)
   if size(chunksize(:))!=size(sz),
     error("h5create: chunksize is different size from 3rd argument");
-  end
+  endif
   if !isindex(chunksize),
     error("h5create: invalid chunksize");
-  end
+  endif
   chunksize = chunksize(:);
-end
+endif
 
 if size(sz,1)==1, # convert [n] to [1xn]
   sz = [sz; 1];
   if !isempty(chunksize)
     chunksize = [chunksize; 1];
-  end
-end
+  endif
+endif
 
 __h5create__(filename,create_file,location,sz,datatype,chunksize,fillvalue);
 

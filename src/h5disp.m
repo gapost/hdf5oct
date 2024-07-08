@@ -54,12 +54,12 @@ endif
 
 if nargin < 3,
   mode = 'simple';
-end
+endif
 
 mode = tolower(mode);
 if !(strcmp(mode,'simple') || strcmp(mode,'min')),
   error("Invalid 'mode' option. Valid values: 'simple' or 'min'");
-end
+endif
 
 info = h5info(filename,location);
 
@@ -68,7 +68,7 @@ if strcmp(mode,'simple'),
   __disph5__(info,0);
 else
   __disph5_min__(info,0);
-end
+endif
 
 
 endfunction
@@ -82,7 +82,7 @@ function disp_indented(name,value,depth)
     disp([blanks(2*depth) "'" name "':"]);
     disp([char(ones(size(S,1),2*(depth+1))*' ') S]);
   endif
-end
+endfunction
 
 function s = disp_size(sz)
   if isempty(sz),
@@ -96,7 +96,7 @@ endfunction
 
 function __dispAttr__(info, depth)
 n=numfields(info);
-if n==0, return; end
+if n==0, return; endif
 indent = blanks(2*depth);
 disp([indent "Attributes (" num2str(n) "):"]);
 names = fieldnames(info);
@@ -120,8 +120,8 @@ elseif isfield(info,"Dataspace"), # info is a dataset
     disp([indent "Dataset '" info.Name "'"]);
     __dispAttr__(info.Attributes, depth+1);
     disp([indent "  Extent: " num2str(info.Dataspace.ExtentType)]);
-    if !isempty(info.Dataspace.Size), disp([indent "  Size: " disp_size(info.Dataspace.Size)]); end
-    if !isempty(info.Dataspace.MaxSize), disp([indent "  MaxSize: " disp_size(double(info.Dataspace.MaxSize))]); end
+    if !isempty(info.Dataspace.Size), disp([indent "  Size: " disp_size(info.Dataspace.Size)]); endif
+    if !isempty(info.Dataspace.MaxSize), disp([indent "  MaxSize: " disp_size(double(info.Dataspace.MaxSize))]); endif
     __disph5__(info.Datatype,depth+1);
     if !isempty(info.ChunkSize)
         disp([indent "  ChunkSize: [" num2str(info.ChunkSize) "]"]);
@@ -130,11 +130,11 @@ elseif isfield(info,"Class"), # info is a datatype
     disp([indent "Datatype"]);
     disp([indent "  Class: '" info.Class "'"]);
     disp([indent "  OctaveClass: '" info.OctaveClass "'"]);
-    if isfield(info,"Size"), disp([indent "  Size: " num2str(info.Size) ]); end
-    if isfield(info,"Sign"), disp([indent "  Sign: " info.Sign]); end
-    if isfield(info,"charSet"), disp([indent "  charSet: " info.charSet]); end
-    if isfield(info,"Pading"), disp([indent "  Pading: " info.Pading]); end
-end
+    if isfield(info,"Size"), disp([indent "  Size: " num2str(info.Size) ]); endif
+    if isfield(info,"Sign"), disp([indent "  Sign: " info.Sign]); endif
+    if isfield(info,"charSet"), disp([indent "  charSet: " info.charSet]); endif
+    if isfield(info,"Pading"), disp([indent "  Pading: " info.Pading]); endif
+endif
 
 endfunction
 
@@ -150,7 +150,7 @@ if isfield(info,"Groups"), # info is a group
     for i=1:size(groups,1) __disph5_min__(groups(i),depth+1); endfor
 elseif isfield(info,"Dataspace"), # info is a dataset
     disp([indent "Dataset '" info.Name "'"]);
-end
+endif
 
 endfunction
 

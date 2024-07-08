@@ -220,8 +220,8 @@ octave_value read_attr(const H5Obj &obj, const string &attrname)
 }
 
 // h5readatt(filename,location,attr)
-DEFUN_DLD(__h5readatt__, args, , "__h5write__: backend for h5write\n\
-Users should not use this directly. Use h5write.m instead")
+DEFUN_DLD(__h5readatt__, args, , "__h5readatt__: backend for h5readatt\n\
+Users should not use this directly. Use h5readatt.m instead")
 {
     if (args.length()!=3) error("__h5readatt__: wrong # of args");
     string filename = args(0).string_value();
@@ -264,8 +264,8 @@ Users should not use this directly. Use h5write.m instead")
 }
 
 // h5writeatt(filename,location,attr,val)
-DEFUN_DLD(__h5writeatt__, args, , "__h5write__: backend for h5write\n\
-Users should not use this directly. Use h5write.m instead")
+DEFUN_DLD(__h5writeatt__, args, , "__h5writeatt__: backend for h5writeatt\n\
+Users should not use this directly. Use h5writeatt.m instead")
 {
     if (args.length()!=4) error("__h5writeatt__: wrong # of args");
     string filename = args(0).string_value();
@@ -319,16 +319,16 @@ Users should not use this directly. Use h5write.m instead")
     return octave_value_list();
 }
 
-DEFUN_DLD(h5info, args, argout, "-*- texinfo -*-\n\
-@deftypefn {Loadable Function} info = h5info (@var{filename})\n\
-@deftypefnx {Loadable Function} info = h5info (@var{filename}, @var{location})\n\
-\n\
-Return information about the content of a HDF5 file.\n\
-\n\
-info = h5info(filename) returns information about an entire HDF5 file, \
-including information about the groups, datasets, and named datatypes contained within it.\n\n\
-info = h5info(filename,loc) returns information about the specified location in the HDF5 file.\n\
-@end deftypefn")
+DEFUN_DLD(h5info, args, argout, "-*- texinfo -*- \n\
+@deftypefn {Loadable Function} {@var{info}=} h5info (@var{filename}) \n\
+@deftypefnx {Loadable Function} {@var{info}=} h5info (@var{filename}, @var{location}) \n\n\
+Return information about the content of a HDF5 file.\n\n\
+@code{info = h5info(@var{filename})} returns information about an entire HDF5 file.\n\n\
+@code{info = h5info(@var{filename},@var{location})} returns \
+information about the specified location in the HDF5 file.\n\n\
+The return value, @var{info}, is a structure with detailed information \
+on the groups, datasets, and datatypes contained in the file.\n\n\
+@seealso{h5disp}\n@end deftypefn")
 {
     int nargin = args.length();
     if (nargin < 1 || nargin > 2)

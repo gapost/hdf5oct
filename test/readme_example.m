@@ -1,5 +1,5 @@
 clear
-if isfile('test.h5'), unlink('test.h5'); end
+if isfile('test.h5'), unlink('test.h5'); endif
 
 pkg load hdf5oct 
 

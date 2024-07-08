@@ -115,10 +115,10 @@ else
         stride = check_idx_vec(stride,datasize,'stride');
     else
         stride = [];
-    end
-end
+    endif
+endif
 
-if ischar(data), data = cellstr(data); end
+if ischar(data), data = cellstr(data); endif
 
 __h5write__(filename,location,data,start_pos,count,stride);
 
@@ -128,16 +128,16 @@ function j = check_idx_vec(i, sz, lbl)
 
 if !(isvector(i) && isindex(i)),
     error(["h5write: " lbl " must be a vector of valid index values"]);
-end
+endif
 j = i(:);
 if length(j)==1,
   j = [j; 1];
-end
+endif
 if length(j) != length(sz)
     error(["h5write: size of " lbl " incompatible with data"]);
-end
+endif
 
-end
+endfunction
 
 
 

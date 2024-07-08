@@ -100,14 +100,14 @@ else
         stride = check_idx_vec(stride,'stride');
     else
         stride = [];
-    end
+    endif
     if length(count)!=length(start_pos),
         error(["h5write: count should have the same size as start"]);
-    end
+    endif
     if nargin==6 && length(stride)!=length(start_pos),
         error(["h5write: stride should have the same size as start"]);
-    end
-end
+    endif
+endif
 
 data = __h5read__(filename,location,start_pos,count,stride);
 
@@ -117,11 +117,11 @@ function j = check_idx_vec(i, lbl)
 
 if !(isvector(i) && isindex(i)),
     error(["h5write: " lbl " must be a vector of valid index values"]);
-end
+endif
 
 j = i(:);
 
-end
+endfunction
 
 
 

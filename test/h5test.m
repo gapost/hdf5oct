@@ -23,7 +23,7 @@
 
 pkg load hdf5oct
 
-if isfile('test.h5'), unlink('test.h5'); end
+if isfile('test.h5'), unlink('test.h5'); endif
 
 disp("------------ test help strings: ----------------")
 function test_help(funcname)
