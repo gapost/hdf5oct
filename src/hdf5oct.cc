@@ -360,9 +360,9 @@ on the groups, datasets, and datatypes contained in the file.\n\n\
 
         // check that location is valid & exists
         if (!h5o::validLocation(location))
-            error("h5writeatt: %s", h5o::lastError.c_str());
+            error("h5info: %s", h5o::lastError.c_str());
         if (!h5o::locationExists(file, location))
-            error("h5writeatt: location '%s' does not exist", location.c_str());
+            error("h5info: location '%s' does not exist", location.c_str());
 
         switch (file.getObjectType(location))
         {
