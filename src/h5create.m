@@ -24,7 +24,7 @@
 # @deftypefn {Function File} { } h5create (@var{filename}, @var{dsetname}, @var{size})
 # @deftypefnx {Function File} { } h5create (@var{filename}, @var{dsetname}, @var{size}, @var{key}, @var{val},...)
 #
-# Create a dataset in a HDF5 file.
+# Create a HDF5 dataset.
 #
 # @code{h5create (@var{filename}, @var{dsetname}, @var{size})} 
 # creates a dataset with name @var{dsetname} and size @var{size}

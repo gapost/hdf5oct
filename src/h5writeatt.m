@@ -23,13 +23,15 @@
 # -*- texinfo -*-
 # @deftypefn {Function File} { } h5writeatt (@var{filename}, @var{location}, @var{attr}, @var{val})
 #
-# Write attribute to HDF5 file.
+# Write a HDF5 attribute.
+#
+# Input arguments:
 #
 # @table @asis
 # @item @var{filename}
-# Filename of an existing HDF5 file, specified as a string
+# Filename of an existing HDF5 file, specified as a string.
 # @item @var{location}
-# The path to an existing node in the HDF5 file, which can be either a Group,
+# The full path to an existing node in the HDF5 file, which can be either a Group,
 # a Dataset or a Named DataType. The root group, "/", is also valid.
 # @item @var{attr}
 # Name of attribute, specified as a string scalar. If the attribute does not exist,

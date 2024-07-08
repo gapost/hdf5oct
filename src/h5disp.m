@@ -23,16 +23,18 @@
 # -*- texinfo -*-
 # @deftypefn  {Function File} { } h5disp (@var{filename})
 # @deftypefnx {Function File} { } h5disp (@var{filename},@var{location})
+# @deftypefnx {Function File} { } h5disp (@var{filename},@var{location},@var{mode})
 #
-# Display contents of a HDF5 file.
+# Display the contents of a HDF5 file.
 #
-# h5disp(filename) displays the metadata that describes the structure of
+# @code{h5disp(@var{filename})} displays the metadata that describes the structure of
 # the specified HDF5 file.
 #
-# h5disp(filename,location) displays the metadata for the specified location
-# within the file.
+# @code{h5disp(@var{filename},@var{location})} displays the metadata for 
+# the specified location within the file.
 #
-# h5disp(filename,loc,mode), where mode is 'min', displays only the group and
+# @code{h5disp(@var{filename},@var{location},@var{mode})}, where @var{mode} is 'min', 
+# displays only the group and
 # dataset names. The default for mode is 'simple', which displays the dataset
 # metadata and attribute values.
 #

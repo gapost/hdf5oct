@@ -25,7 +25,7 @@
 # @deftypefnx {Function File} { } h5write (@var{filename}, @var{dsetname}, @var{data}, @var{start}, @var{count})
 # @deftypefnx {Function File} { } h5write (@var{filename}, @var{dsetname}, @var{data}, @var{start}, @var{count}, @var{stride})
 #
-# Write data to a dataset in HDF5 file.
+# Write data to a HDF5 dataset.
 #
 # @code{h5write(filename,dsetname,data)} writes data to an entire dataset, dsetname,
 # in the specified HDF5 file. If the dataset is fixed in size,

@@ -25,15 +25,22 @@
 # @deftypefnx {Function File} {@var{data}=} h5read (@var{filename}, @var{dsetname}, @var{start}, @var{count})
 # @deftypefnx {Function File} {@var{data}=} h5read (@var{filename}, @var{dsetname}, @var{start}, @var{count}, @var{stride})
 #
-# data = h5read(filename,ds) reads all the data from the dataset ds
-# contained in the HDF5 file filename.
+# Read data from a HDF5 dataset.
 #
-# data = h5read(filename,ds,start,count) reads a subset of data from the dataset
-# beginning at the location specified in start.
-# The count argument specifies the number of elements to read along each dimension.
+# @code{data = h5read(@var{filename}, @var{dsetname})} 
+# reads all the data from the dataset @var{dsetname}
+# contained in the HDF5 file @var{filename}.
 #
-# data = h5read(filename,ds,start,count,stride) returns a subset of data with
+# @code{data = h5read(@var{filename}, @var{dsetname}, @var{start}, @var{count})} 
+# reads a subset of data from the dataset
+# beginning at the location specified in @var{start}.
+# @var{count} specifies the number of elements to read along each dimension.
+#
+# @code{data = h5read(@var{filename}, @var{dsetname}, @var{start}, @var{count}, @var{stride})} 
+# returns a subset of data with
 # the interval between the indices of each dimension of the dataset specified by stride.
+#
+# Input arguments:
 #
 # @table @asis
 # @item @var{filename}

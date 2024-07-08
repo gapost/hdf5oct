@@ -21,11 +21,14 @@
 ##
 
 # -*- texinfo -*-
-# @deftypefn {Function File} {@var{att_val}=} h5readatt (@var{filename},
-# @var{location}, @var{attr})
+# @deftypefn {Function File} {@var{att_val}=} h5readatt (@var{filename}, @var{location}, @var{attr})
+#
+# Read a HDF5 attribute.
 #
 # Retrieves the value of the specified attribute named @var{attr}
 # from the specified location @var{location} in the HDF5 file @var{filename}.
+#
+# Input arguments:
 #
 # @table @asis
 # @item @var{filename}
