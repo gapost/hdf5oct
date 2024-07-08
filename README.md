@@ -131,8 +131,7 @@ To install the latest snapshot run the following in OCTAVE
 After successful installation, test the package with
 
 ```matlab
-    pkg load hdf5oct
-    test h5create
+    pkg test hdf5oct
 ```
 
 This performs a number of basic tests on all functions in the package.
