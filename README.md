@@ -122,7 +122,13 @@ A MATLAB user or an OCTAVE user employing `hdf5oct` to export/import data to/fro
 
 # Installation #########################
 
-To install the latest snapshot run the following in OCTAVE
+To install the latest package release run the following in OCTAVE
+
+```matlab
+    pkg install -forge hdf5oct
+```
+
+or, for the latest development snapshot
 
 ```matlab
     pkg install "https://github.com/gapost/hdf5oct/archive/master.zip"
