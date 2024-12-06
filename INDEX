@@ -7,4 +7,5 @@ HDF5 file I/O
  h5readatt
  h5info
  h5disp
+ h5load
 
