@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <title>a HDF5 wrapper for GNU Octave: h5info</title>
+    <title>a HDF5 wrapper for GNU Octave: h5load</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ==" crossorigin="anonymous" referrerpolicy="no-referrer">
@@ -105,9 +105,9 @@
 					<li><a href="h5writeatt.html" class="text-decoration-none font-monospace"><small>h5writeatt</small></a></li>
 					<li><a href="h5read.html" class="text-decoration-none font-monospace"><small>h5read</small></a></li>
 					<li><a href="h5readatt.html" class="text-decoration-none font-monospace"><small>h5readatt</small></a></li>
-					<li><a href="h5info.html" class="text-decoration-none font-monospace fw-bolder"><small>h5info</small></a></li>
+					<li><a href="h5info.html" class="text-decoration-none font-monospace"><small>h5info</small></a></li>
 					<li><a href="h5disp.html" class="text-decoration-none font-monospace"><small>h5disp</small></a></li>
-					<li><a href="h5load.html" class="text-decoration-none font-monospace"><small>h5load</small></a></li>
+					<li><a href="h5load.html" class="text-decoration-none font-monospace fw-bolder"><small>h5load</small></a></li>
 				</ul>
 				</div>
 			</div>
@@ -118,30 +118,36 @@
             <div class="card-header card-header-mod">
               <div class="row d-flex flex-wrap align-items-center">
                 <h3 class="d-inline-block mr-2">
-                Function&nbsp;Reference: <b><code>h5info</code></b>
+                Function&nbsp;Reference: <b><code>h5load</code></b>
                 </h3>
               </div>
             </div>
             <div class="card-body">
-dl>
-<dt><u>Loadable Function:</u> <var>info</var>= <b>h5info</b><i> (<var>filename</var>)</i></dt>
-<dt><u>Loadable Function:</u> <var>info</var>= <b>h5info</b><i> (<var>filename</var>, <var>location</var>)</i></dt>
+<dl>
+<dt><u>Function File:</u>  <var>data</var> =  <b>h5load</b><i> (<var>filename</var>)</i></dt>
+<dt><u>Function File:</u>  <var>data</var> =  <b>h5load</b><i> (<var>filename</var>,<var>location</var>)</i></dt>
 </dl>
 
-<p>Return information about the content of a HDF5 file.
+<p> Load an entire HDF5 file or a portion of it as a struct.
 </p>
 <div class="ms-5">
-<p><code>info = h5info(<var>filename</var>)</code> returns information about an entire HDF5 file.
+<p> <code>h5load(<var>filename</var>)</code> loads all datasets in <var>filename</var> and returns
+ the struct <var>data</var>. Datasets and Groups become fields of the structure reproducting
+ the internal hierarchy of the HDF5 file. Attributes, datatypes and other components are
+ not loaded.
+</p>  
+<p> <code>h5disp(<var>filename</var>,<var>location</var>)</code> loads all datasets in <var>filename</var> below
+ the node specified by <var>location</var>. If <var>location</var> is a group, then all datasets
+ and groups below it are returned in <var>data</var>. If <var>location</var> is a dataset, then only this
+ dataset will be returned.
 </p>
-<p><code>info = h5info(<var>filename</var>,<var>location</var>)</code> returns information about the specified location in the HDF5 file.
+<p> This function is not provided by the MATLAB high-level HDF5 interface.
 </p>
-<p>The return value, <var>info</var>, is a structure with detailed information on the groups, datasets, and datatypes contained in the file.
-</p>
-<p><strong>See also: </strong>
-  <a href="h5disp.html">h5disp</a>
+<p> <strong>See also: </strong>
+  <a href="h5read.html">h5read</a>
 </p>
 <p><strong>Source Code: </strong>
-  <a href="">h5info</a>
+  <a href="">h5load</a>
 </div>
 
             </div>
