@@ -136,9 +136,11 @@ disp('ok')
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 disp("Test h5write and h5read...")
 
-function check_dset(location, data)
+function check_dset(location, data, attclass)
 	 atttype = evalin("caller",["typeinfo(",data,")"]);
-	 attclass = evalin("caller",["class(",data,")"]);
+   if nargin<3,
+  	 attclass = evalin("caller",["class(",data,")"]);
+   end
    sz = size(evalin("caller",data));
 	 printf(["write ",num2str(ndims(evalin("caller",data))),"d ",attclass," ",atttype," dataset ",location,"..."])
 	 h5create("test.h5",location,sz,'datatype',attclass);
@@ -206,12 +208,18 @@ check_dset('/bar1/bar2/foo2_int', "matrix")
 
 disp("Test h5write and h5read for complex data...")
 matrix = reshape((1:s^3)*0.1, [s s s]);
-matrix = matrix + i*matrix*0.01;
-check_dset('/foo_complex', "matrix")
+matrix = matrix + 1i*matrix*0.01;
+check_dset('/foo_complex', "matrix", "double complex")
 
 range = (1:s^3)*0.1;
-range = range + i*range*0.01;
-check_dset('/foo_complex_range', "range")
+range = range + 1i*range*0.01;
+check_dset('/foo_complex_range', "range", "double complex")
+
+disp("Test h5write and h5read for logical data...")
+matrix = reshape(rand(s^3,1) > 0.5, [s s s]);
+check_dset('/foo_logical', "matrix")
+range = rand(s^3,1) > 0.5;
+check_dset('/foo_logical_range', "range")
 
 disp("Test h5writeatt and h5readatt...")
 
@@ -257,8 +265,17 @@ check_att("/","testatt_string")
 testatt_string = 'buona sera!';
 check_att("/","testatt_string")
 
+testatt_complex = (0:0.1:1)*1i;
+check_att("/","testatt_complex")
+% check overwriting a complex attribute
+testatt_complex = (0:0.1:1)*2i;
+check_att("/","testatt_complex")
 
-
+testatt_logical = rand(3,1)>0.5;
+check_att("/","testatt_logical")
+% check overwriting a logical attribute
+testatt_logical = rand(3,1)>0.5;
+check_att("/","testatt_logical")
 
 disp("------------ test failures and wrong arguments: ----------------")
 disp("read from a nonexisting file")
