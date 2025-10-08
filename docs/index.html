@@ -23,12 +23,32 @@
       });
     </script>
     <style>
+    h5.fs {
+    margin-top: -0.15em;
+    margin-bottom: -0.15em;
+    }
     h6:hover {
       color: gray;
     }
+    code {
+    font-family: Consolas, "Courier New", monospace;
+    border-radius: 0.3em;
+    white-space: nowrap;
+    color: gray;
+    }
+    code.description {
+    font-family: Consolas, "Courier New", monospace;
+    border-radius: 0.3em;
+    white-space: normal;
+    font-size:1.2em;
+    color: gray;
+    }
     var {
-      font-style: italics;
-      font-weight: bold;
+    font-family: Consolas, "Courier New", monospace;
+    border-radius: 0.3em;
+    font-style: normal;
+    font-weight: bold;
+    color: gray;
     }
     td {
       vertical-align: top;
@@ -84,11 +104,11 @@
         <div class="card-header card-header-mod">
           <div class="row d-flex flex-wrap align-items-center">
             <div class="col-sm-3 col-md-2 mb-2 mb-sm-0">
-              <img src="assets/hdf5oct.png" class="d-block m-auto" alt="hdf5oct">
+              <img src="assets/hdf5oct.png" class="img-fluid" alt="hdf5oct" style="max-height: 180px;">
             </div>
             <div class="col-sm-9 col-md-10">
               <h3 class="d-inline-block mr-2">hdf5oct</h3>
-              <b>1.0.0&nbsp;2024-06-25</b>
+              <b>1.1.0&nbsp;2025-10-08</b>
               <p class="indent">
                 MATLAB compatible high-level functions for HDF5 file I/O
               </p>
@@ -99,6 +119,7 @@
            <p>Select Category:
              <select name="cat" onchange="location = this.options[this.selectedIndex].value;">
              <option value="#HDF5 file I/O">HDF5 file I/O</option>
+             <option value="#HDF5 file info">HDF5 file info</option>
              </select>
            <p>
 
@@ -150,6 +171,21 @@
                <tr>
                  <td>
                    <b><code>
+                   <a href="h5load.html">h5load</a>
+                   </code></b>
+                 </td>
+                 <td>Load an entire HDF5 file or a portion of it as a struct.</td>
+               </tr>
+             </tbody>
+           </table>
+           <h3 class="category">
+             <a name="HDF5 file info">HDF5 file info</a>
+           </h3>
+           <table class="table table-striped">
+             <tbody>
+               <tr>
+                 <td>
+                   <b><code>
                    <a href="h5info.html">h5info</a>
                    </code></b>
                  </td>
@@ -162,14 +198,6 @@
                    </code></b>
                  </td>
                  <td>Display the contents of a HDF5 file.</td>
-               </tr>
-               <tr>
-                 <td>
-                   <b><code>
-                   <a href="h5load.html">h5load</a>
-                   </code></b>
-                 </td>
-                 <td>Load an entire HDF5 file or a portion of it as a struct.</td>
                </tr>
              </tbody>
            </table>

@@ -23,12 +23,32 @@
       });
     </script>
     <style>
+    h5.fs {
+    margin-top: -0.15em;
+    margin-bottom: -0.15em;
+    }
     h6:hover {
       color: gray;
     }
+    code {
+    font-family: Consolas, "Courier New", monospace;
+    border-radius: 0.3em;
+    white-space: nowrap;
+    color: gray;
+    }
+    code.description {
+    font-family: Consolas, "Courier New", monospace;
+    border-radius: 0.3em;
+    white-space: normal;
+    font-size:1.2em;
+    color: gray;
+    }
     var {
-      font-style: italics;
-      font-weight: bold;
+    font-family: Consolas, "Courier New", monospace;
+    border-radius: 0.3em;
+    font-style: normal;
+    font-weight: bold;
+    color: gray;
     }
     td {
       vertical-align: top;
@@ -105,9 +125,20 @@
 					<li><a href="h5writeatt.html" class="text-decoration-none font-monospace"><small>h5writeatt</small></a></li>
 					<li><a href="h5read.html" class="text-decoration-none font-monospace"><small>h5read</small></a></li>
 					<li><a href="h5readatt.html" class="text-decoration-none font-monospace"><small>h5readatt</small></a></li>
+					<li><a href="h5load.html" class="text-decoration-none font-monospace"><small>h5load</small></a></li>
+				</ul>
+				</div>
+			</div>
+			<div class="row">
+				<input id="togList2" type="checkbox">
+				<label for="togList2">
+					<span><h6>HDF5 file info</h6></span>
+					<span><h6>HDF5 file info</h6></span>
+				</label>
+				<div class="list">
+				<ul style="list-style-type: none; padding-left: 20px;">
 					<li><a href="h5info.html" class="text-decoration-none font-monospace"><small>h5info</small></a></li>
 					<li><a href="h5disp.html" class="text-decoration-none font-monospace"><small>h5disp</small></a></li>
-					<li><a href="h5load.html" class="text-decoration-none font-monospace"><small>h5load</small></a></li>
 				</ul>
 				</div>
 			</div>
@@ -124,8 +155,8 @@
             </div>
             <div class="card-body">
 <dl>
-<dt><u>Function File:</u> <b>h5create</b><i> (<var>filename</var>, <var>dsetname</var>, <var>size</var>)</i></dt>
-<dt><u>Function File:</u> <b>h5create</b><i> (<var>filename</var>, <var>dsetname</var>, <var>size</var>, <var>key</var>, <var>val</var>,...)</i></dt>
+<dt><code><h5 class="fs">Function File: <b>h5create</b> (<var>filename</var>, <var>dsetname</var>, <var>size</var>)</code></h5></dt>
+<dt><code><h5 class="fs">Function File: <b>h5create</b> (<var>filename</var>, <var>dsetname</var>, <var>size</var>, <var>key</var>, <var>val</var>,...)</code></h5></dt>
 </dl>
 
 <p> Create a HDF5 dataset.
@@ -179,10 +210,22 @@
 <dt> &lsquo;<samp>Datatype</samp>&rsquo;</dt>
 </dl>
 <p> one of the strings:
- &lsquo;<samp>double</samp>&rsquo;(default) | &lsquo;<samp>single</samp>&rsquo; | &lsquo;<samp>uint64</samp>&rsquo; | &lsquo;<samp>uint32</samp>&rsquo; |
+ &lsquo;<samp>double</samp>&rsquo; (default) | &lsquo;<samp>single</samp>&rsquo; | 
+ &lsquo;<samp>double complex</samp>&rsquo; | &lsquo;<samp>single complex</samp>&rsquo; |
+ &lsquo;<samp>uint64</samp>&rsquo; | &lsquo;<samp>uint32</samp>&rsquo; |
  &lsquo;<samp>uint16</samp>&rsquo; | &lsquo;<samp>uint8</samp>&rsquo; | &lsquo;<samp>int64</samp>&rsquo; | &lsquo;<samp>int32</samp>&rsquo; | &lsquo;<samp>int16</samp>&rsquo; |
- &lsquo;<samp>int8</samp>&rsquo; | &rsquo;string&rsquo;
- </p></dd>
+ &lsquo;<samp>int8</samp>&rsquo; | &lsquo;<samp>logical</samp>&rsquo; | &lsquo;<samp>string</samp>&rsquo;
+</p>
+<p> The &lsquo;<samp>complex</samp>&rsquo; and &lsquo;<samp>logical</samp>&rsquo; datatypes are not supported in the MATLAB high-level HDF5 interface.
+</p>
+<p> <code>hdf5oct</code> supports these types in compatibility with <code>h5py</code>: 
+</p>
+<p> - the &lsquo;<samp>complex</samp>&rsquo; types are mapped to compound HDF5 datatypes with 2 members, 
+ &lsquo;<samp>r</samp>&rsquo; and &lsquo;<samp>i</samp>&rsquo;, for real and imaginary part, respectively.
+</p>
+<p> - the &lsquo;<samp>logical</samp>&rsquo; type is mapped to a HDF5 Enum: <code>(FALSE = 0, TRUE = 1)</code>
+</p>
+ </dd>
 <dt> &lsquo;<samp>ChunkSize</samp>&rsquo;</dt>
 </dl>
 <p> The value may be either a vector specifying the chunk size,

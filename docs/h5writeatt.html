@@ -23,12 +23,32 @@
       });
     </script>
     <style>
+    h5.fs {
+    margin-top: -0.15em;
+    margin-bottom: -0.15em;
+    }
     h6:hover {
       color: gray;
     }
+    code {
+    font-family: Consolas, "Courier New", monospace;
+    border-radius: 0.3em;
+    white-space: nowrap;
+    color: gray;
+    }
+    code.description {
+    font-family: Consolas, "Courier New", monospace;
+    border-radius: 0.3em;
+    white-space: normal;
+    font-size:1.2em;
+    color: gray;
+    }
     var {
-      font-style: italics;
-      font-weight: bold;
+    font-family: Consolas, "Courier New", monospace;
+    border-radius: 0.3em;
+    font-style: normal;
+    font-weight: bold;
+    color: gray;
     }
     td {
       vertical-align: top;
@@ -105,9 +125,20 @@
 					<li><a href="h5writeatt.html" class="text-decoration-none font-monospace fw-bolder"><small>h5writeatt</small></a></li>
 					<li><a href="h5read.html" class="text-decoration-none font-monospace"><small>h5read</small></a></li>
 					<li><a href="h5readatt.html" class="text-decoration-none font-monospace"><small>h5readatt</small></a></li>
+					<li><a href="h5load.html" class="text-decoration-none font-monospace"><small>h5load</small></a></li>
+				</ul>
+				</div>
+			</div>
+			<div class="row">
+				<input id="togList2" type="checkbox">
+				<label for="togList2">
+					<span><h6>HDF5 file info</h6></span>
+					<span><h6>HDF5 file info</h6></span>
+				</label>
+				<div class="list">
+				<ul style="list-style-type: none; padding-left: 20px;">
 					<li><a href="h5info.html" class="text-decoration-none font-monospace"><small>h5info</small></a></li>
 					<li><a href="h5disp.html" class="text-decoration-none font-monospace"><small>h5disp</small></a></li>
-					<li><a href="h5load.html" class="text-decoration-none font-monospace"><small>h5load</small></a></li>
 				</ul>
 				</div>
 			</div>
@@ -124,7 +155,7 @@
             </div>
             <div class="card-body">
 <dl>
-<dt><u>Function File:</u> <b>h5writeatt</b><i> (<var>filename</var>, <var>location</var>, <var>attr</var>, <var>val</var>)</i></dt>
+<dt><code><h5 class="fs">Function File: <b>h5writeatt</b> (<var>filename</var>, <var>location</var>, <var>attr</var>, <var>val</var>)</code></h5></dt>
 </dl>
 
 <p> Write a HDF5 attribute.

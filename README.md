@@ -16,9 +16,23 @@ The following functions are implemented:
 - h5load 
 ```
 
-The functions can be used to export/import multidimensional array data of class
+The function `h5load` (load entire file or group) is not supported in MATLAB.
 
-    'double','single','double complex','single complex','uint64','int64', ... 'uint8', 'int8', 'logical', 'string'
+`hdf5oct` can be used to export/import multidimensional array data of class
+
+    'double','single','double complex','single complex',
+    'uint64','int64', ... 'uint8', 'int8', 
+    'logical', 
+    'string'
+
+The `complex` and `logical` datatypes are not supported in the MATLAB high-level interface.
+
+`hdf5oct` supports these types in compatibility with [`h5py`](https://www.h5py.org): 
+
+- the `complex` types are mapped to compound HDF5 datatypes with 2 members, 
+`r` and `i`, for real and imaginary part, respectively.
+
+- the `logical` type is mapped to a HDF5 Enum: `{FALSE = 0, TRUE = 1}`
 
 # Getting started
 
