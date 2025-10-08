@@ -67,11 +67,21 @@
 # @table @asis
 # @item @option{Datatype}
 # one of the strings:
-# @samp{double}(default) | @samp{single} | 
-# @samp{double complex}(default) | @samp{single complex} |
+# @samp{double} (default) | @samp{single} | 
+# @samp{double complex} | @samp{single complex} |
 # @samp{uint64} | @samp{uint32} |
 # @samp{uint16} | @samp{uint8} | @samp{int64} | @samp{int32} | @samp{int16} |
 # @samp{int8} | @samp{logical} | @samp{string}
+#
+# The @samp{complex} and @samp{logical} datatypes are not supported in the MATLAB high-level HDF5 interface.
+#
+# @code{hdf5oct} supports these types in compatibility with @code{h5py}: 
+#
+# - the @samp{complex} types are mapped to compound HDF5 datatypes with 2 members, 
+# @samp{r} and @samp{i}, for real and imaginary part, respectively.
+#
+# - the @samp{logical} type is mapped to a HDF5 Enum: @code{(FALSE = 0, TRUE = 1)}
+#
 # @item @option{ChunkSize}
 # The value may be either a vector specifying the chunk size,
 # or an empty vector [], which means no chunking (this is the default).
