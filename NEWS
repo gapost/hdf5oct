@@ -1,0 +1,13 @@
+Summary of important user-visible changes for hdf5oct 1.1.0:
+-------------------------------------------------------------------
+
+ New functions:
+ ==============
+
+ ** h5load
+
+ Improvements:
+ =============
+
+ ** `double complex`, `single complex` and `logical` datatypes are supported
+    in compatibility with `h5py`
