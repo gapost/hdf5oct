@@ -47,7 +47,8 @@ namespace h5o = hdf5oct;
 DEFUN_DLD(__h5create__, args, , "__h5create__: backend for h5create\n\
 Users should not use this directly. Use h5create.m instead")
 {
-    if (args.length()!=7) error("__h5create__: wrong # of args");
+    if (args.length() != 7)
+        error("__h5create__: wrong # of args");
     string filename = args(0).string_value();
     bool create_file = args(1).bool_value();
     string location = args(2).string_value();
@@ -114,7 +115,8 @@ Users should not use this directly. Use h5create.m instead")
 DEFUN_DLD(__h5read__, args, , "__h5read__: backend for h5read\n\
 Users should not use this directly. Use h5read.m instead")
 {
-    if (args.length()!=5) error("__h5read__: wrong # of args");
+    if (args.length() != 5)
+        error("__h5read__: wrong # of args");
     string filename = args(0).string_value();
     string location = args(1).string_value();
     uint64NDArray start = args(2).uint64_array_value();
@@ -156,7 +158,8 @@ Users should not use this directly. Use h5read.m instead")
 DEFUN_DLD(__h5write__, args, , "__h5write__: backend for h5write\n\
 Users should not use this directly. Use h5write.m instead")
 {
-    if (args.length()!=6) error("__h5write__: wrong # of args");
+    if (args.length() != 6)
+        error("__h5write__: wrong # of args");
     string filename = args(0).string_value();
     string location = args(1).string_value();
     octave_value data = args(2);
@@ -223,7 +226,8 @@ octave_value read_attr(const H5Obj &obj, const string &attrname)
 DEFUN_DLD(__h5readatt__, args, , "__h5readatt__: backend for h5readatt\n\
 Users should not use this directly. Use h5readatt.m instead")
 {
-    if (args.length()!=3) error("__h5readatt__: wrong # of args");
+    if (args.length() != 3)
+        error("__h5readatt__: wrong # of args");
     string filename = args(0).string_value();
     string location = args(1).string_value();
     string attrname = args(2).string_value();
@@ -267,7 +271,8 @@ Users should not use this directly. Use h5readatt.m instead")
 DEFUN_DLD(__h5writeatt__, args, , "__h5writeatt__: backend for h5writeatt\n\
 Users should not use this directly. Use h5writeatt.m instead")
 {
-    if (args.length()!=4) error("__h5writeatt__: wrong # of args");
+    if (args.length() != 4)
+        error("__h5writeatt__: wrong # of args");
     string filename = args(0).string_value();
     string location = args(1).string_value();
     string attrname = args(2).string_value();
@@ -392,42 +397,36 @@ on the groups, datasets, and datatypes contained in the file.\n\n\
     return octave_value_list(info);
 }
 
-HighFive::AtomicType<double> hdf5oct::predtype::NATIVE_DOUBLE = HighFive::AtomicType<double>();
-HighFive::AtomicType<float> hdf5oct::predtype::NATIVE_FLOAT = HighFive::AtomicType<float>();
-HighFive::AtomicType<uint64_t> hdf5oct::predtype::NATIVE_UINT64 = HighFive::AtomicType<uint64_t>();
-HighFive::AtomicType<int64_t> hdf5oct::predtype::NATIVE_INT64 = HighFive::AtomicType<int64_t>();
-HighFive::AtomicType<uint32_t> hdf5oct::predtype::NATIVE_UINT32 = HighFive::AtomicType<uint32_t>();
-HighFive::AtomicType<int32_t> hdf5oct::predtype::NATIVE_INT32 = HighFive::AtomicType<int32_t>();
-HighFive::AtomicType<uint16_t> hdf5oct::predtype::NATIVE_UINT16 = HighFive::AtomicType<uint16_t>();
-HighFive::AtomicType<int16_t> hdf5oct::predtype::NATIVE_INT16 = HighFive::AtomicType<int16_t>();
-HighFive::AtomicType<uint8_t> hdf5oct::predtype::NATIVE_UINT8 = HighFive::AtomicType<uint8_t>();
-HighFive::AtomicType<int8_t> hdf5oct::predtype::NATIVE_INT8 = HighFive::AtomicType<int8_t>();
-HighFive::VariableLengthStringType hdf5oct::predtype::DEFAULT_STRING_TYPE = HighFive::VariableLengthStringType(HighFive::CharacterSet::Utf8);
-
 HighFive::DataType hdf5oct::h5type_from_spec(const std::string &dtype_spec)
 {
     if (dtype_spec == "double")
-        return predtype::NATIVE_DOUBLE;
+        return h5traits<double>::predType();
     else if (dtype_spec == "single")
-        return predtype::NATIVE_FLOAT;
+        return h5traits<float>::predType();
+    else if (dtype_spec == "double complex")
+        return h5traits<std::complex<double>>::predType();
+    else if (dtype_spec == "single complex")
+        return h5traits<std::complex<float>>::predType();
     else if (dtype_spec == "uint64")
-        return predtype::NATIVE_UINT64;
+        return h5traits<uint64_t>::predType();
     else if (dtype_spec == "int64")
-        return predtype::NATIVE_INT64;
+        return h5traits<int64_t>::predType();
     else if (dtype_spec == "uint32")
-        return predtype::NATIVE_UINT32;
+        return h5traits<uint32_t>::predType();
     else if (dtype_spec == "int32")
-        return predtype::NATIVE_INT32;
+        return h5traits<int32_t>::predType();
     else if (dtype_spec == "uint16")
-        return predtype::NATIVE_UINT16;
+        return h5traits<uint16_t>::predType();
     else if (dtype_spec == "int16")
-        return predtype::NATIVE_INT16;
+        return h5traits<int16_t>::predType();
     else if (dtype_spec == "uint8")
-        return predtype::NATIVE_UINT8;
+        return h5traits<uint8_t>::predType();
     else if (dtype_spec == "int8")
-        return predtype::NATIVE_INT8;
+        return h5traits<int8_t>::predType();
+    else if (dtype_spec == "logical")
+        return h5traits<bool>::predType();
     else if (dtype_spec == "string")
-        return predtype::DEFAULT_STRING_TYPE;
+        return h5traits<std::string>::predType();
     return HighFive::DataType();
 }
 
@@ -570,12 +569,27 @@ void hdf5oct::dtype_info_t::assign(const H5::DataType &dt)
         break;
     case H5::DataTypeClass::Compound:
         h5class = "compound";
+        if (dt == h5o::h5traits<std::complex<double>>::predType())
+        {
+            octave_class = "double complex";
+            size = dt.getSize();
+        }
+        else if (dt == h5o::h5traits<std::complex<float>>::predType())
+        {
+            octave_class = "single complex";
+            size = dt.getSize();
+        }
         break;
     case H5::DataTypeClass::Reference:
         h5class = "reference";
         break;
     case H5::DataTypeClass::Enum:
         h5class = "enum";
+        if (dt == h5o::h5traits<bool>::predType())
+        {
+            octave_class = "logical";
+            size = dt.getSize();
+        }
         break;
     case H5::DataTypeClass::VarLen:
         h5class = "vlen";
@@ -719,7 +733,12 @@ bool hdf5oct::data_exchange::isCompatible(const data_exchange &dx)
 {
     if (dtype_spec != dx.dtype_spec)
     {
-        lastError = "different datatypes";
+        lastError = "different datatype specs";
+        return false;
+    }
+    if (dtype.getSize() != dx.dtype.getSize())
+    {
+        lastError = "different datatype size";
         return false;
     }
 
@@ -900,7 +919,11 @@ bool hdf5oct::data_exchange::assign(octave_value v)
     reset();
 
     // find class
-    if (v.isinteger())
+    if (v.islogical())
+    {
+        dtype_spec = "logical";
+    }
+    else if (v.isinteger())
     {
         if (v.is_uint64_type())
             dtype_spec = "uint64";
@@ -926,8 +949,16 @@ bool hdf5oct::data_exchange::assign(octave_value v)
         else if (v.is_single_type())
             dtype_spec = "single";
     }
+    else if (v.iscomplex())
+    {
+        if (v.is_double_type())
+            dtype_spec = "double complex";
+        else if (v.is_single_type())
+            dtype_spec = "single complex";
+    }
     else if (v.iscellstr())
         dtype_spec = "string";
+
     if (dtype_spec.empty())
     {
         lastError = "Unsupported Octave data of class '";
@@ -966,6 +997,10 @@ void hdf5oct::data_exchange::write(const data_exchange &dxfile)
         write_impl<double>(dxfile);
     else if (dtype_spec == "single")
         write_impl<float>(dxfile);
+    else if (dtype_spec == "double complex")
+        write_impl<std::complex<double>>(dxfile);
+    else if (dtype_spec == "single complex")
+        write_impl<std::complex<float>>(dxfile);
     else if (dtype_spec == "uint64")
         write_impl<uint64_t>(dxfile);
     else if (dtype_spec == "int64")
@@ -982,6 +1017,8 @@ void hdf5oct::data_exchange::write(const data_exchange &dxfile)
         write_impl<uint8_t>(dxfile);
     else if (dtype_spec == "int8")
         write_impl<int8_t>(dxfile);
+    else if (dtype_spec == "logical")
+        write_impl<bool>(dxfile);
     else if (dtype_spec == "string")
         write_string(dxfile);
 }
@@ -1044,6 +1081,10 @@ octave_value hdf5oct::data_exchange::read_attribute()
         ret = read_attr_impl<double>();
     else if (dtype_spec == "single")
         ret = read_attr_impl<float>();
+    else if (dtype_spec == "double complex")
+        ret = read_attr_impl<std::complex<double>>();
+    else if (dtype_spec == "single complex")
+        ret = read_attr_impl<std::complex<float>>();
     else if (dtype_spec == "uint64")
         ret = read_attr_impl<uint64_t>();
     else if (dtype_spec == "int64")
@@ -1060,6 +1101,8 @@ octave_value hdf5oct::data_exchange::read_attribute()
         ret = read_attr_impl<uint8_t>();
     else if (dtype_spec == "int8")
         ret = read_attr_impl<int8_t>();
+    else if (dtype_spec == "logical")
+        ret = read_attr_impl<bool>();
     else if (dtype_spec == "string")
         ret = read_string_attr();
     return ret;
@@ -1114,6 +1157,10 @@ octave_value hdf5oct::data_exchange::read()
         ret = read_impl<double>();
     else if (dtype_spec == "single")
         ret = read_impl<float>();
+    else if (dtype_spec == "double complex")
+        ret = read_impl<std::complex<double>>();
+    else if (dtype_spec == "single complex")
+        ret = read_impl<std::complex<float>>();
     else if (dtype_spec == "uint64")
         ret = read_impl<uint64_t>();
     else if (dtype_spec == "int64")
@@ -1130,6 +1177,8 @@ octave_value hdf5oct::data_exchange::read()
         ret = read_impl<uint8_t>();
     else if (dtype_spec == "int8")
         ret = read_impl<int8_t>();
+    else if (dtype_spec == "logical")
+        ret = read_impl<bool>();
     else if (dtype_spec == "string")
         ret = read_string();
     return ret;
@@ -1158,6 +1207,10 @@ bool hdf5oct::data_exchange::write_as_attribute(H5::Attribute &attr)
         write_attr_impl<double>(attr);
     else if (dtype_spec == "single")
         write_attr_impl<float>(attr);
+    else if (dtype_spec == "double complex")
+        write_attr_impl<std::complex<double>>(attr);
+    else if (dtype_spec == "single complex")
+        write_attr_impl<std::complex<float>>(attr);
     else if (dtype_spec == "uint64")
         write_attr_impl<uint64_t>(attr);
     else if (dtype_spec == "int64")
@@ -1174,6 +1227,8 @@ bool hdf5oct::data_exchange::write_as_attribute(H5::Attribute &attr)
         write_attr_impl<uint8_t>(attr);
     else if (dtype_spec == "int8")
         write_attr_impl<int8_t>(attr);
+    else if (dtype_spec == "logical")
+        write_attr_impl<bool>(attr);
     else if (dtype_spec == "string")
         write_string_attr(attr);
     return true;
@@ -1239,4 +1294,3 @@ bool hdf5oct::validLocation(const std::string &loc)
     }
     return true;
 }
-

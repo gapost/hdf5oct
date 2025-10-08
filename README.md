@@ -2,7 +2,7 @@ hdf5oct - a HDF5 wrapper for GNU Octave
 =======================================
 
 This is a [GNU Octave](https://octave.org) package for data serialization to/from HDF5 files. 
-It provides an interface compatible to MATLAB's **"High-Level Functions for HDF5 files"**.
+It provides an interface mostly compatible to MATLAB's **"High-Level Functions for HDF5 files"**.
 
 The following functions are implemented:
 ```
@@ -12,12 +12,13 @@ The following functions are implemented:
 - h5read
 - h5readatt
 - h5info
-- h5disp 
+- h5disp
+- h5load 
 ```
 
 The functions can be used to export/import multidimensional array data of class
 
-    'double','single','uint64','int64', ... 'uint8', 'int8', 'string'
+    'double','single','double complex','single complex','uint64','int64', ... 'uint8', 'int8', 'logical', 'string'
 
 # Getting started
 
@@ -109,18 +110,18 @@ In HDF5, arrays are stored in C-style, [row-major order](https://en.wikipedia.or
 
 To avoid array transposition operations during data serialization, MATLAB employs the following convention, which is also followed by `hdf5oct`:
 
-|  Storage Type | MATLAB/OCTAVE array size | HDF5 DataSpace dimensions |
-| :---------------: | :---------------: | :-----------------------: |
-| Matrix |   $[N \times M]$         |      $[M \times N]$              |
-| Multidimensional Array |   $[N_1 \times N_2 \times ... \times N_m]$  | $[N_m \times N_{m-1} \times ... \times N_1]$ |
-| Row Vector |  $[1 \times N]$ | $[N \times 1]$ or $[N]$  |
-| Column Vector |  $[N \times 1]$ | $[1 \times N]$   |
+|      Storage Type      |         MATLAB/OCTAVE array size         |          HDF5 DataSpace dimensions           |
+| :--------------------: | :--------------------------------------: | :------------------------------------------: |
+|         Matrix         |              $[N \times M]$              |                $[M \times N]$                |
+| Multidimensional Array | $[N_1 \times N_2 \times ... \times N_m]$ | $[N_m \times N_{m-1} \times ... \times N_1]$ |
+|       Row Vector       |              $[1 \times N]$              |           $[N \times 1]$ or $[N]$            |
+|     Column Vector      |              $[N \times 1]$              |                $[1 \times N]$                |
 
 In this manner, the data is copied "as-is" from memory to disk, minimizing overhead and memory allocations.
 
 A MATLAB user or an OCTAVE user employing `hdf5oct` to export/import data to/from HDF5 files will not notice any difference. However, when a MATLAB- or `hdf5oct`-generated file is opened by another application, or vice-versa, the arrays will appear transposed. 
 
-# Installation #########################
+# Installation
 
 To install the latest package release run the following in OCTAVE
 
@@ -142,21 +143,20 @@ After successful installation, test the package with
 
 This performs a number of basic tests on all functions in the package.
 
-# TODO #################################
+# TODO 
 
 - support compression flags for h5create
 
 - h5read: implement MATLAB compatible mapping to OCTAVE of the remaining HDF5 datatypes: `Bitfield, Opaque, Reference, Enum, Compound, Array`
 
-- write more comprehensive tests instead of a few random choices. Also
-  test for error conditions.
+- write more comprehensive tests.
 
 ## License
 
 © 2012, Tom Mullins \
 © 2015, Tom Mullins, Anton Starikov, Thorsten Liebig, Stefan Großhauser \
 © 2008-2013, Andrew Collette \
-© 2024, George Apostolopoulos
+© 2024-2025, George Apostolopoulos
 
 [HighFive](https://github.com/BlueBrain/HighFive) is used internally as a C++ interface to the HDF5 library.
 
